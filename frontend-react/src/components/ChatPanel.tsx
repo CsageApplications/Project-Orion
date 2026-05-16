@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { chatWithOrion } from '../lib/api'
+import { useOrionStore } from '../store'
 
 interface Message {
   id: number
@@ -10,6 +12,8 @@ interface Message {
 let msgId = 1
 
 export default function ChatPanel() {
+  const backendOnline = useOrionStore((s) => s.backendOnline)
+  const pushLog = useOrionStore((s) => s.pushLog)
   const [messages, setMessages] = useState<Message[]>([
     { id: msgId++, role: 'orion', text: 'ORION online. How can I assist?' },
   ])
@@ -23,17 +27,22 @@ export default function ChatPanel() {
     setInput('')
     setMessages((m) => [...m, { id: msgId++, role: 'user', text }])
     setThinking(true)
+    pushLog('INFO', `User: ${text}`)
 
-    // Placeholder — will connect to Rust backend
-    await new Promise((r) => setTimeout(r, 900 + Math.random() * 600))
-    setMessages((m) => [
-      ...m,
-      {
-        id: msgId++,
-        role: 'orion',
-        text: 'Backend not yet connected. Phase 1 in progress.',
-      },
-    ])
+    try {
+      if (!backendOnline) throw new Error('Backend offline')
+      const reply = await chatWithOrion(text)
+      setMessages((m) => [...m, { id: msgId++, role: 'orion', text: reply }])
+      pushLog('INFO', `Orion: ${reply.slice(0, 60)}${reply.length > 60 ? '...' : ''}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setMessages((m) => [
+        ...m,
+        { id: msgId++, role: 'orion', text: `[ERROR] ${msg}` },
+      ])
+      pushLog('ERROR', msg)
+    }
+
     setThinking(false)
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
   }
