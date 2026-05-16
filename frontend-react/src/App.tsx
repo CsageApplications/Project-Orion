@@ -1,13 +1,79 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import HudRings from './components/HudRings'
 import StatusPanel from './components/StatusPanel'
 import EventLog from './components/EventLog'
 import ChatPanel from './components/ChatPanel'
 import Waveform from './components/Waveform'
+import { useOrionStore } from './store'
+import { sendRobotCommand, fetchRobotStatus } from './lib/api'
+
+const WS_URL = import.meta.env.VITE_WS_URL ?? 'ws://localhost:8080/ws'
 
 function App() {
   const [listening, setListening] = useState(false)
+  const setBackendOnline = useOrionStore((s) => s.setBackendOnline)
+  const setRobotStatus = useOrionStore((s) => s.setRobotStatus)
+  const pushLog = useOrionStore((s) => s.pushLog)
+  const backendOnline = useOrionStore((s) => s.backendOnline)
+  const wsRef = useRef<WebSocket | null>(null)
+
+  // ── WebSocket connection ──────────────────────────────────────────
+  useEffect(() => {
+    let reconnectTimer: ReturnType<typeof setTimeout>
+
+    const connect = () => {
+      const ws = new WebSocket(WS_URL)
+      wsRef.current = ws
+
+      ws.onopen = () => {
+        setBackendOnline(true)
+        pushLog('INFO', 'Backend connected')
+        // Fetch initial robot status over REST
+        fetchRobotStatus().then(setRobotStatus).catch(() => {})
+      }
+
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data)
+          if (data.state !== undefined) setRobotStatus(data)
+          else pushLog('INFO', e.data)
+        } catch {
+          pushLog('INFO', e.data)
+        }
+      }
+
+      ws.onerror = () => {
+        setBackendOnline(false)
+      }
+
+      ws.onclose = () => {
+        setBackendOnline(false)
+        pushLog('WARN', 'Backend disconnected — retrying in 5s')
+        reconnectTimer = setTimeout(connect, 5000)
+      }
+    }
+
+    connect()
+    return () => {
+      clearTimeout(reconnectTimer)
+      wsRef.current?.close()
+    }
+  }, [])
+
+  // ── Quick command handler ─────────────────────────────────────────
+  const handleCommand = async (cmd: string) => {
+    pushLog('INFO', `Command sent: ${cmd}`)
+    try {
+      await sendRobotCommand(cmd)
+      pushLog('INFO', `${cmd} acknowledged`)
+      // Refresh robot status
+      fetchRobotStatus().then(setRobotStatus).catch(() => {})
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed'
+      pushLog('ERROR', `${cmd} failed: ${msg}`)
+    }
+  }
 
   return (
     <div className="hud-grid w-full h-full flex flex-col overflow-hidden select-none">
@@ -76,6 +142,7 @@ function App() {
             {['PATROL', 'DOCK', 'FOLLOW', 'STOP', 'SLEEP'].map((cmd) => (
               <button
                 key={cmd}
+                onClick={() => handleCommand(cmd)}
                 className="hud-label text-[0.6rem] px-3 py-1.5 border border-[rgba(0,212,255,0.2)] hover:border-[#00d4ff] hover:text-[#00d4ff] hover:opacity-100 transition-all"
               >
                 {cmd}
@@ -96,7 +163,7 @@ function App() {
       <div className="flex items-center justify-between px-6 py-1.5 border-t border-[rgba(0,212,255,0.12)] text-[0.6rem] tracking-widest uppercase">
         <span className="text-[#2a4a5a]">Phase 1 — Desktop AI Assistant</span>
         <span className="text-[#2a4a5a]">v0.1.0-alpha</span>
-        <span className="text-[#2a4a5a]">Backend: <span className="text-[#ff3b3b]">OFFLINE</span></span>
+        <span className="text-[#2a4a5a]">Backend: <span className={backendOnline ? 'text-[#00d4ff]' : 'text-[#ff3b3b]'}>{backendOnline ? 'ONLINE' : 'OFFLINE'}</span></span>
       </div>
     </div>
   )
