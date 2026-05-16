@@ -12,6 +12,8 @@ Orion is a full-stack robotics platform that combines mechanical design, electro
 
 - Node.js 20+
 - npm 10+
+- Rust 1.80+ (`rustup` recommended)
+- Postgres 15+ (local or Docker)
 - Git
 
 ### 1. Clone the repository
@@ -39,7 +41,27 @@ npm run dev
 
 The command center UI will be available at `http://localhost:3000`.
 
-### 4. Run a production build
+### 4. Run the backend
+
+```bash
+cd backend-rust
+cp .env.example .env  # then fill in OPENAI_API_KEY or ANTHROPIC_API_KEY
+cargo run
+```
+
+The backend API will be available at `http://localhost:8080`.
+
+Key endpoints:
+
+```
+GET  /health                  — health check
+GET  /api/robot/status        — current robot state
+POST /api/robot/command       — send a command (PATROL, DOCK, STOP, etc.)
+POST /api/chat                — send a message to Orion
+WS   /ws                      — WebSocket telemetry stream
+```
+
+### 5. Run a production build
 
 ```bash
 cd frontend-react
@@ -50,8 +72,8 @@ Output is written to `frontend-react/dist/`.
 
 ### Notes
 
-- The Rust backend (`backend-rust/`) does not exist yet — Phase 1 in progress.
 - The frontend will show backend status as `OFFLINE` until the backend is running on `http://localhost:8080`.
+- Postgres is optional for Phase 1 — the backend runs without a database connection (DB calls are commented out until needed).
 - All environment variables are documented in `.env.example` at the root.
 
 ---
@@ -187,4 +209,11 @@ PCB Design:      KiCad
 
 Project Orion is currently in **Phase 1 — Desktop AI Assistant**.
 
-The JARVIS-style React command center is scaffolded and running. The Rust backend and LLM integration are the next focus.
+| Component | Status |
+|---|---|
+| React command center (JARVIS HUD) | Complete — running on `localhost:3000` |
+| Rust/Axum backend | Scaffolded — API, WebSocket, LLM gateway |
+| LLM integration | Implemented — requires API key to activate |
+| Postgres schema | Migrations written — pending DB setup |
+| Robot hardware | Phase 2 |
+| ROS 2 integration | Phase 3 |
