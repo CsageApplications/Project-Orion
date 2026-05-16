@@ -6,6 +6,56 @@ Orion is a full-stack robotics platform that combines mechanical design, electro
 
 ---
 
+## Quickstart
+
+### Prerequisites
+
+- Node.js 20+
+- npm 10+
+- Git
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/CsageApplications/Project-Orion.git
+cd Project-Orion
+```
+
+### 2. Set up environment variables
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and fill in any values you need. For frontend-only development, the defaults in `frontend-react/.env` are sufficient to run the UI.
+
+### 3. Run the frontend
+
+```bash
+cd frontend-react
+npm install
+npm run dev
+```
+
+The command center UI will be available at `http://localhost:3000`.
+
+### 4. Run a production build
+
+```bash
+cd frontend-react
+npm run build
+```
+
+Output is written to `frontend-react/dist/`.
+
+### Notes
+
+- The Rust backend (`backend-rust/`) does not exist yet — Phase 1 in progress.
+- The frontend will show backend status as `OFFLINE` until the backend is running on `http://localhost:8080`.
+- All environment variables are documented in `.env.example` at the root.
+
+---
+
 ## Vision
 
 Orion is designed to live in the home as a calm, intelligent, and useful assistant. The goal is not a toy or a gimmick — it is an embodied AI platform that can speak, listen, see, move, and eventually help with real-world tasks.
@@ -82,8 +132,8 @@ orion/
 
 | Phase | Name | Status |
 |---|---|---|
-| 0 | Planning and Architecture | In Progress |
-| 1 | Desktop AI Assistant | Not Started |
+| 0 | Planning and Architecture | Complete |
+| 1 | Desktop AI Assistant | In Progress |
 | 2 | Embodied Robot Head | Not Started |
 | 3 | ROS 2 Integration | Not Started |
 | 4 | Mobile Base | Not Started |
@@ -135,4 +185,6 @@ PCB Design:      KiCad
 
 ## Status
 
-Project Orion is currently in **Phase 0 — Planning and Architecture**.
+Project Orion is currently in **Phase 1 — Desktop AI Assistant**.
+
+The JARVIS-style React command center is scaffolded and running. The Rust backend and LLM integration are the next focus.
