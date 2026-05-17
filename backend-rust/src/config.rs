@@ -12,6 +12,8 @@ pub struct Config {
     pub llm_provider: LlmProvider,
     pub llm_model: String,
     pub frontend_origin: String,
+    pub elevenlabs_api_key: Option<String>,
+    pub elevenlabs_voice_id: String,
 }
 
 #[derive(Debug, Clone)]
@@ -49,6 +51,9 @@ impl Config {
             llm_provider,
             frontend_origin: env::var("FRONTEND_ORIGIN")
                 .unwrap_or_else(|_| "http://localhost:3000".to_string()),
+            elevenlabs_api_key: env::var("ELEVENLABS_API_KEY").ok(),
+            elevenlabs_voice_id: env::var("ELEVENLABS_VOICE_ID")
+                .unwrap_or_else(|_| "pNInz6obpgDQGcFmaJgB".to_string()), // Adam
         })
     }
 }
