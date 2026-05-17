@@ -11,7 +11,7 @@ export async function chatWithOrion(message: string): Promise<string> {
     throw new Error(err.error ?? `HTTP ${res.status}`)
   }
   const data = await res.json()
-  return data.response as string
+  return (data.message ?? data.response ?? 'No response') as string
 }
 
 export async function sendRobotCommand(
