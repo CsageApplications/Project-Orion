@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, forwardRef, useImperativeHandle } from 'react'
 import { motion } from 'framer-motion'
 import { chatWithOrion } from '../lib/api'
 import { useOrionStore } from '../store'
@@ -11,7 +11,12 @@ interface Message {
 
 let msgId = 1
 
-export default function ChatPanel({ onSpeak }: { onSpeak?: (text: string) => void }) {
+export interface ChatPanelHandle {
+  injectMessage: (text: string) => void
+}
+
+const ChatPanel = forwardRef<ChatPanelHandle, { onSpeak?: (text: string) => void }>(
+  function ChatPanel({ onSpeak }, ref) {
   const backendOnline = useOrionStore((s) => s.backendOnline)
   const pushLog = useOrionStore((s) => s.pushLog)
   const [messages, setMessages] = useState<Message[]>([
@@ -21,8 +26,19 @@ export default function ChatPanel({ onSpeak }: { onSpeak?: (text: string) => voi
   const [thinking, setThinking] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  const send = async () => {
-    const text = input.trim()
+  useImperativeHandle(ref, () => ({
+    injectMessage: (text: string) => {
+      setInput(text)
+      // Defer so state is set before send fires
+      setTimeout(() => {
+        sendText(text)
+      }, 0)
+    },
+  }))
+
+  const send = async () => sendText(input.trim())
+
+  const sendText = async (text: string) => {
     if (!text) return
     setInput('')
     setMessages((m) => [...m, { id: msgId++, role: 'user', text }])
@@ -130,4 +146,7 @@ export default function ChatPanel({ onSpeak }: { onSpeak?: (text: string) => voi
       </div>
     </div>
   )
-}
+  }
+)
+
+export default ChatPanel

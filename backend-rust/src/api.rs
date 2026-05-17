@@ -1,4 +1,4 @@
-use axum::{extract::State, http::Response, Json};
+use axum::{extract::State, http::{Response, HeaderMap}, Json};
 use axum::body::Body;
 use serde::{Deserialize, Serialize};
 use chrono::Utc;
@@ -165,4 +165,37 @@ pub async fn tts(
         .unwrap();
 
     Ok(response)
+}
+
+// ─── STT ──────────────────────────────────────────────────────────────────────
+
+#[derive(Serialize)]
+pub struct SttResponse {
+    pub transcript: String,
+}
+
+/// Accepts raw audio bytes in the request body.
+/// Content-Type should be the audio MIME type (e.g. audio/webm).
+pub async fn stt(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    body: axum::body::Bytes,
+) -> AppResult<Json<SttResponse>> {
+    let mime = headers
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("audio/webm")
+        .to_owned();
+
+    tracing::info!(bytes = body.len(), mime = %mime, "STT request received");
+
+    let transcript = state
+        .stt
+        .transcribe(body.to_vec(), &mime)
+        .await
+        .map_err(|e| crate::error::AppError::Llm(e.to_string()))?;
+
+    tracing::info!(transcript = %transcript, "STT transcript");
+
+    Ok(Json(SttResponse { transcript }))
 }

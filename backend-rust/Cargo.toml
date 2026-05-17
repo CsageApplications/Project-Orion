@@ -32,7 +32,7 @@ thiserror = "2"
 anyhow = "1"
 
 # HTTP client (for LLM calls)
-reqwest = { version = "0.12", features = ["json", "stream"] }
+reqwest = { version = "0.12", features = ["json", "stream", "multipart"] }
 
 # Async streams
 futures = "0.3"
