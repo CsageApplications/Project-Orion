@@ -13,12 +13,14 @@ mod db;
 mod error;
 mod llm;
 mod robot;
+mod stt;
 mod tts;
 mod ws;
 
 use api::RobotStatus;
 use config::Config;
 use llm::LlmClient;
+use stt::SttClient;
 use tts::TtsClient;
 
 #[derive(Clone)]
@@ -28,6 +30,7 @@ pub struct AppState {
     pub ws_tx: broadcast::Sender<String>,
     pub llm: Arc<LlmClient>,
     pub tts: Arc<TtsClient>,
+    pub stt: Arc<SttClient>,
 }
 
 #[tokio::main]
@@ -59,6 +62,7 @@ async fn main() -> anyhow::Result<()> {
         ws_tx,
         llm: Arc::new(LlmClient::new(&config)),
         tts: Arc::new(TtsClient::new(&config)),
+        stt: Arc::new(SttClient::new(&config)),
     };
 
     // CORS
@@ -80,6 +84,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/chat", post(api::chat))
         // TTS
         .route("/api/tts", post(api::tts))
+        // STT
+        .route("/api/stt", post(api::stt))
         // WebSocket
         .route("/ws", get(ws::ws_handler))
         .with_state(state)

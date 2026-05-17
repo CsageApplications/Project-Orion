@@ -1,19 +1,26 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import HudRings from './components/HudRings'
 import StatusPanel from './components/StatusPanel'
 import EventLog from './components/EventLog'
-import ChatPanel from './components/ChatPanel'
+import ChatPanel, { type ChatPanelHandle } from './components/ChatPanel'
 import Waveform from './components/Waveform'
 import { useOrionStore } from './store'
 import { sendRobotCommand, fetchRobotStatus } from './lib/api'
 import { useTts } from './hooks/useTts'
+import { useVoiceInput } from './hooks/useVoiceInput'
 
 const WS_URL = import.meta.env.VITE_WS_URL ?? 'ws://localhost:8080/ws'
 
 function App() {
-  const [listening, setListening] = useState(false)
+  const chatRef = useRef<ChatPanelHandle>(null)
   const { speak, speaking, analyser } = useTts()
+
+  const handleTranscript = useCallback((text: string) => {
+    chatRef.current?.injectMessage(text)
+  }, [])
+
+  const { listening, toggleListening } = useVoiceInput(handleTranscript)
   const setBackendOnline = useOrionStore((s) => s.setBackendOnline)
   const setRobotStatus = useOrionStore((s) => s.setRobotStatus)
   const pushLog = useOrionStore((s) => s.pushLog)
@@ -129,7 +136,7 @@ function App() {
           {/* Voice indicator */}
           <motion.div
             className="hud-panel w-full px-4 py-3 flex flex-col items-center gap-2 cursor-pointer"
-            onClick={() => setListening((l) => !l)}
+            onClick={toggleListening}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
           >
@@ -156,7 +163,7 @@ function App() {
         {/* Right column */}
         <div className="flex flex-col gap-3 min-h-0">
           <div className="flex-1 min-h-0">
-            <ChatPanel onSpeak={speak} />
+            <ChatPanel ref={chatRef} onSpeak={speak} />
           </div>
         </div>
       </div>
