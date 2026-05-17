@@ -1,4 +1,5 @@
-use axum::{extract::State, Json};
+use axum::{extract::State, http::Response, Json};
+use axum::body::Body;
 use serde::{Deserialize, Serialize};
 use chrono::Utc;
 use uuid::Uuid;
@@ -135,4 +136,33 @@ pub async fn chat(
         role: "assistant",
         timestamp: Utc::now().to_rfc3339(),
     }))
+}
+
+// ─── TTS ──────────────────────────────────────────────────────────────────────
+
+#[derive(Deserialize)]
+pub struct TtsRequest {
+    pub text: String,
+}
+
+pub async fn tts(
+    State(state): State<AppState>,
+    Json(req): Json<TtsRequest>,
+) -> AppResult<Response<Body>> {
+    tracing::info!(chars = req.text.len(), "TTS request received");
+
+    let audio = state
+        .tts
+        .synthesise(&req.text)
+        .await
+        .map_err(|e| crate::error::AppError::Llm(e.to_string()))?;
+
+    let response = Response::builder()
+        .status(200)
+        .header("Content-Type", "audio/mpeg")
+        .header("Content-Length", audio.len().to_string())
+        .body(Body::from(audio))
+        .unwrap();
+
+    Ok(response)
 }

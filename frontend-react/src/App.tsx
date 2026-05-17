@@ -7,11 +7,13 @@ import ChatPanel from './components/ChatPanel'
 import Waveform from './components/Waveform'
 import { useOrionStore } from './store'
 import { sendRobotCommand, fetchRobotStatus } from './lib/api'
+import { useTts } from './hooks/useTts'
 
 const WS_URL = import.meta.env.VITE_WS_URL ?? 'ws://localhost:8080/ws'
 
 function App() {
   const [listening, setListening] = useState(false)
+  const { speak, speaking, analyser } = useTts()
   const setBackendOnline = useOrionStore((s) => s.setBackendOnline)
   const setRobotStatus = useOrionStore((s) => s.setRobotStatus)
   const pushLog = useOrionStore((s) => s.pushLog)
@@ -131,9 +133,9 @@ function App() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
           >
-            <Waveform active={listening} />
-            <span className={`hud-label ${listening ? 'text-[#00d4ff] opacity-100' : ''}`}>
-              {listening ? 'LISTENING...' : 'TAP TO SPEAK'}
+            <Waveform active={speaking || listening} analyser={analyser} />
+            <span className={`hud-label ${(speaking || listening) ? 'text-[#00d4ff] opacity-100' : ''}`}>
+              {speaking ? 'ORION SPEAKING...' : listening ? 'LISTENING...' : 'TAP TO SPEAK'}
             </span>
           </motion.div>
 
@@ -154,7 +156,7 @@ function App() {
         {/* Right column */}
         <div className="flex flex-col gap-3 min-h-0">
           <div className="flex-1 min-h-0">
-            <ChatPanel />
+            <ChatPanel onSpeak={speak} />
           </div>
         </div>
       </div>

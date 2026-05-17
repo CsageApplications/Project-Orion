@@ -13,11 +13,13 @@ mod db;
 mod error;
 mod llm;
 mod robot;
+mod tts;
 mod ws;
 
 use api::RobotStatus;
 use config::Config;
 use llm::LlmClient;
+use tts::TtsClient;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -25,6 +27,7 @@ pub struct AppState {
     pub robot_state: Arc<RwLock<RobotStatus>>,
     pub ws_tx: broadcast::Sender<String>,
     pub llm: Arc<LlmClient>,
+    pub tts: Arc<TtsClient>,
 }
 
 #[tokio::main]
@@ -55,6 +58,7 @@ async fn main() -> anyhow::Result<()> {
         robot_state: Arc::new(RwLock::new(RobotStatus::default_state())),
         ws_tx,
         llm: Arc::new(LlmClient::new(&config)),
+        tts: Arc::new(TtsClient::new(&config)),
     };
 
     // CORS
@@ -74,6 +78,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/robot/command", post(api::send_command))
         // Chat
         .route("/api/chat", post(api::chat))
+        // TTS
+        .route("/api/tts", post(api::tts))
         // WebSocket
         .route("/ws", get(ws::ws_handler))
         .with_state(state)

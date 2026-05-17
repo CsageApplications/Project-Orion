@@ -11,7 +11,7 @@ interface Message {
 
 let msgId = 1
 
-export default function ChatPanel() {
+export default function ChatPanel({ onSpeak }: { onSpeak?: (text: string) => void }) {
   const backendOnline = useOrionStore((s) => s.backendOnline)
   const pushLog = useOrionStore((s) => s.pushLog)
   const [messages, setMessages] = useState<Message[]>([
@@ -41,6 +41,7 @@ export default function ChatPanel() {
       if (reply) {
         setMessages((m) => [...m, { id: msgId++, role: 'orion', text: reply }])
         pushLog('INFO', `Orion: ${reply.slice(0, 60)}${reply.length > 60 ? '...' : ''}`)
+        onSpeak?.(reply)
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
