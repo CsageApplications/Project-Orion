@@ -19,7 +19,7 @@ export default function EventLog() {
   return (
     <div className="hud-panel h-full p-4 flex flex-col gap-2">
       <span className="hud-label">Event Log</span>
-      <div className="flex-1 overflow-y-auto font-mono text-[0.65rem] flex flex-col gap-0.5 pr-1">
+      <div className="flex-1 overflow-y-auto font-mono text-[0.65rem] flex flex-col gap-0.5 pr-1 break-words">
         <AnimatePresence initial={false}>
           {logs.map((e) => (
             <motion.div

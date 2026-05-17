@@ -12,7 +12,7 @@ function OuterRing() {
     if (ref.current) ref.current.rotation.z += delta * 0.25
   })
   return (
-    <Torus ref={ref} args={[2.6, 0.012, 6, 120]}>
+    <Torus ref={ref} args={[2.0, 0.012, 16, 120]}>
       <meshBasicMaterial color={CYAN} transparent opacity={0.55} />
     </Torus>
   )
@@ -24,7 +24,7 @@ function MiddleRing() {
     if (ref.current) ref.current.rotation.z -= delta * 0.4
   })
   return (
-    <Torus ref={ref} args={[2.1, 0.008, 6, 120]}>
+    <Torus ref={ref} args={[1.6, 0.008, 16, 120]}>
       <meshBasicMaterial color={AMBER} transparent opacity={0.4} />
     </Torus>
   )
@@ -36,7 +36,7 @@ function InnerRing() {
     if (ref.current) ref.current.rotation.z += delta * 0.7
   })
   return (
-    <Torus ref={ref} args={[1.55, 0.006, 6, 120]}>
+    <Torus ref={ref} args={[1.15, 0.006, 16, 120]}>
       <meshBasicMaterial color={CYAN} transparent opacity={0.35} />
     </Torus>
   )
@@ -52,7 +52,7 @@ function PulseDisk() {
   })
   return (
     <mesh ref={ref}>
-      <circleGeometry args={[0.9, 64]} />
+      <circleGeometry args={[0.7, 64]} />
       <meshBasicMaterial color={CYAN} transparent opacity={0.06} />
     </mesh>
   )
@@ -76,7 +76,7 @@ function TickMarks() {
   const ticks = Array.from({ length: 36 }, (_, i) => {
     const angle = (i / 36) * Math.PI * 2
     const len = i % 3 === 0 ? 0.18 : 0.08
-    const r = 2.6
+    const r = 2.0
     const points = [
       new THREE.Vector3(Math.cos(angle) * r, Math.sin(angle) * r, 0),
       new THREE.Vector3(Math.cos(angle) * (r + len), Math.sin(angle) * (r + len), 0),
@@ -102,7 +102,7 @@ function TickMarks() {
 export default function HudRings() {
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+      <Canvas camera={{ position: [0, 0, 5.5], fov: 55 }} dpr={[1, 2]}>
         <ambientLight intensity={0.1} />
         <TickMarks />
         <OuterRing />
