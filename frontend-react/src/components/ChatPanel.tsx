@@ -31,9 +31,17 @@ export default function ChatPanel() {
 
     try {
       if (!backendOnline) throw new Error('Backend offline')
-      const reply = await chatWithOrion(text)
-      setMessages((m) => [...m, { id: msgId++, role: 'orion', text: reply }])
-      pushLog('INFO', `Orion: ${reply.slice(0, 60)}${reply.length > 60 ? '...' : ''}`)
+      const raw = await chatWithOrion(text)
+      // Strip markdown bold/italic so it renders cleanly in the HUD
+      const reply = raw
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/^#{1,3}\s/gm, '')
+        .trim()
+      if (reply) {
+        setMessages((m) => [...m, { id: msgId++, role: 'orion', text: reply }])
+        pushLog('INFO', `Orion: ${reply.slice(0, 60)}${reply.length > 60 ? '...' : ''}`)
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       setMessages((m) => [
