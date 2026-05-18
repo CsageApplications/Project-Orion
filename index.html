@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orion — Modular AI Home Robot (Personal Project)</title>
+  <meta name="description" content="Orion is a personal project exploring modular AI home robotics. Start with the head, expand from there.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cyan:         #00d4ff;
+      --cyan-dark:    #0096b8;
+      --cyan-dim:     rgba(0, 212, 255, 0.12);
+      --cyan-border:  rgba(0, 212, 255, 0.28);
+      --violet:       #7c3aed;
+      --violet-dim:   rgba(124, 58, 237, 0.12);
+      --bg:           #060b14;
+      --bg2:          #080e18;
+      --bg3:          #0c1420;
+      --bg4:          #101a28;
+      --border:       rgba(255, 255, 255, 0.07);
+      --border-cyan:  rgba(0, 212, 255, 0.15);
+      --text:         #cce8f4;
+      --text-dim:     #7aafc8;
+      --text-muted:   #2e5060;
+      --green:        #22d3a5;
+      --amber:        #f59e0b;
+      --red:          #ef4444;
+      --mono:         'JetBrains Mono', monospace;
+      --sans:         'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Background radial glows */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.06) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── SCROLLBAR ────────────────────── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
+
+    /* ─── NAV ──────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 58px;
+      background: rgba(6,11,20,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .nav-by {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.02em;
+      padding-left: 10px;
+      border-left: 1px solid rgba(255,255,255,0.1);
+      margin-left: 2px;
+      line-height: 1.3;
+    }
+    .nav-by a {
+      color: var(--cyan);
+      opacity: 0.8;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .nav-by a:hover { opacity: 1; }
+    .nav-logo-mark {
+      width: 30px; height: 30px;
+      border: 1px solid var(--cyan-border);
+      border-radius: 8px;
+      background: var(--cyan-dim);
+      display: grid; place-items: center;
+    }
+    .nav-logo-mark svg { display: block; }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 1.75rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      transition: color 0.2s;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      padding: 4px 12px;
+      border: 1px solid var(--cyan-border);
+      border-radius: 3px;
+      color: var(--cyan);
+      background: var(--cyan-dim);
+    }
+
+    /* ─── HERO ─────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 8rem 1.5rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black, transparent);
+    }
+
+    .hero-layout {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      max-width: 1100px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px;
+      border: 1px solid var(--cyan-border);
+      border-radius: 100px;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      background: var(--cyan-dim);
+      margin-bottom: 1.5rem;
+    }
+    .hero-badge .pulse {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title .accent {
+      color: transparent;
+      background: linear-gradient(90deg, var(--cyan), #7dd3fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 480px;
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,212,255,0.9), rgba(124,58,237,0.9));
+      color: #050a0f;
+      padding: 0.7rem 1.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none; cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      padding: 0.7rem 1.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-secondary:hover { border-color: var(--cyan-border); color: var(--text); }
+
+    /* Hero card */
+    .hero-card {
+      background: linear-gradient(160deg, rgba(0,212,255,0.06), rgba(124,58,237,0.06));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan-border), transparent);
+    }
+
+    /* ─── SECTION BASE ─────────────────── */
+    section { padding: 5rem 1.5rem; position: relative; }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--text-dim);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ─── CARD ──────────────────────────── */
+    .card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--border-cyan); }
+
+    .card-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border: 1px solid var(--cyan-border);
+      border-radius: 100px;
+      color: var(--cyan);
+      background: var(--cyan-dim);
+      margin-bottom: 0.9rem;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .card p, .card li { color: var(--text-dim); font-size: 0.9rem; line-height: 1.65; }
+
+    /* ─── GRID ──────────────────────────── */
+    .grid { display: grid; gap: 1rem; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    @media (max-width: 900px) {
+      .hero-layout,
+      .grid-3, .grid-2, .product-showcase,
+      .section-header { grid-template-columns: 1fr; flex-direction: column; align-items: flex-start; }
+      .nav-links { display: none; }
+    }
+
+    /* ─── PRODUCT SHOWCASE ──────────────── */
+    .product-showcase {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .big-visual {
+      min-height: 400px;
+      display: grid; place-items: center;
+      background: radial-gradient(circle at center, rgba(0,212,255,0.07), transparent 55%), var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .big-visual::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,212,255,0.012) 3px, rgba(0,212,255,0.012) 4px);
+      pointer-events: none;
+    }
+
+    /* ─── MODULE LIST ───────────────────── */
+    .module-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+    }
+    .module-item:hover { border-color: var(--border-cyan); }
+    .module-item h3 {
+      font-size: 0.95rem; font-weight: 700; margin-bottom: 3px;
+      letter-spacing: -0.01em; color: var(--text);
+    }
+    .module-item p { color: var(--text-dim); font-size: 0.85rem; margin: 0; }
+    .module-price {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-top: 5px;
+    }
+    .module-icon {
+      width: 72px; height: 72px;
+      display: grid; place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(124,58,237,0.08));
+    }
+
+    /* ─── ARCHITECTURE LAYERS ───────────── */
+    .arch-panel {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+    }
+
+    .layer {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1.5rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.25);
+      margin-bottom: 0.6rem;
+      border-left: 2px solid var(--cyan-border);
+    }
+    .layer strong { color: var(--text); font-size: 0.9rem; }
+    .layer span { color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; }
+
+    /* ─── CODE BLOCK ────────────────────── */
+    .code-block {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: var(--text-dim);
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .code-key   { color: var(--cyan); }
+    .code-str   { color: #86efac; }
+    .code-num   { color: var(--amber); }
+
+    /* ─── TIMELINE ──────────────────────── */
+    counter-reset: phase;
+    .timeline { display: grid; gap: 0.75rem; counter-reset: phase; }
+    .phase {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .phase-num {
+      counter-increment: phase;
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--cyan-dim), var(--violet-dim));
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--cyan);
+    }
+    .phase-num::before { content: counter(phase); }
+    .phase .card { flex: 1; }
+
+    /* ─── FOOTER ────────────────────────── */
+    footer {
+      padding: 2.5rem 1.5rem 3rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    footer .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9rem; }
+    footer p { color: var(--text-dim); font-size: 0.85rem; }
+
+    /* ─── DIVIDER ───────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="8" stroke="#00d4ff" stroke-width="1.5"/>
+        <path d="M12 4V1M12 23v-3M20 12h3M1 12h3" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    Orion Robotics
+  </div>
+  <div class="nav-by">A <a href="https://csageapplications.github.io/RIVAL-pages/" target="_blank" rel="noopener">R!O1 Labs</a> project</div>
+  <ul class="nav-links">
+    <li><a href="#vision">Vision</a></li>
+    <li><a href="#platform">Platform</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="https://csageapplications.github.io/RIVAL-pages/" target="_blank" rel="noopener" style="color:var(--cyan);opacity:0.8;">R!O1 Labs ↗</a></li>
+  </ul>
+  <div class="nav-badge">PERSONAL PROJECT · OPEN SOURCE</div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-layout">
+    <div>
+      <div class="hero-badge">
+        <span class="pulse"></span>
+        Modular AI home robotics platform
+      </div>
+      <h1 class="hero-title">
+        Start with the<br/><span class="accent">head.</span><br/>Build from there.
+      </h1>
+      <p class="hero-sub">
+        Orion is a personal project exploring what a modular AI home robot could look like — an intelligent head that can talk, see, and remember, designed to eventually coordinate interchangeable hardware modules.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#current">See what's built →</a>
+        <a class="btn-secondary" href="#vision">Read the vision</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <svg viewBox="0 0 560 520" role="img" aria-label="Orion robot head concept">
+        <defs>
+          <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e2e8f0"/><stop offset="55%" stop-color="#93a4bd"/><stop offset="100%" stop-color="#4b5872"/>
+          </linearGradient>
+          <linearGradient id="visor" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#060b14"/><stop offset="100%" stop-color="#0c1420"/>
+          </linearGradient>
+          <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#e0f2fe"/><stop offset="45%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#0096b8"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="280" cy="450" rx="150" ry="34" fill="rgba(0,0,0,.35)"/>
+        <path d="M155 184C160 102 207 62 280 62C353 62 400 102 405 184L414 326C418 389 376 424 280 424C184 424 142 389 146 326L155 184Z" fill="url(#shell)" stroke="rgba(255,255,255,.45)" stroke-width="2"/>
+        <path d="M179 188C183 132 220 104 280 104C340 104 377 132 381 188L388 292C391 339 357 365 280 365C203 365 169 339 172 292L179 188Z" fill="url(#visor)" stroke="rgba(0,212,255,.35)" stroke-width="2.5"/>
+        <path d="M183 181C204 136 236 118 280 118C324 118 356 136 377 181" stroke="rgba(0,212,255,.3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <rect x="219" y="210" width="54" height="33" rx="16" fill="url(#eyeGlow)"/>
+        <rect x="287" y="210" width="54" height="33" rx="16" fill="url(#eyeGlow)"/>
+        <path d="M236 296C257 312 303 312 324 296" stroke="#00d4ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <circle cx="154" cy="255" r="24" fill="#475569" stroke="rgba(255,255,255,.4)" stroke-width="2"/>
+        <circle cx="406" cy="255" r="24" fill="#475569" stroke="rgba(255,255,255,.4)" stroke-width="2"/>
+        <path d="M256 424h48l14 58h-76z" fill="#334155" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+        <rect x="205" y="472" width="150" height="28" rx="14" fill="#1e293b" stroke="rgba(255,255,255,.2)" stroke-width="2"/>
+        <circle cx="280" cy="73" r="12" fill="#00d4ff"/>
+        <path d="M280 61V30" stroke="#00d4ff" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="280" cy="24" r="10" fill="#7c3aed"/>
+      </svg>
+      <p style="font-size:0.75rem;color:var(--text-dim);text-align:center;margin-top:1rem;font-family:var(--mono);letter-spacing:0.06em;">CONCEPT · ORION HEAD · Robot Talk Show aesthetic</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── Vision ───────────────────────────────────────── -->
+<section id="vision">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Vision</span>
+        <h2 class="section-title">Why we're building this</h2>
+      </div>
+      <p class="section-sub">Orion lowers the barrier to home robotics. Instead of buying one expensive all-in-one robot, customers start with an affordable intelligent head and expand only when they need new capability.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="card-tag">Observation</div>
+        <h3>Robots are all-or-nothing</h3>
+        <p>Most home robot concepts require a full hardware commitment before you know if the system actually fits your life.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">Exploration</div>
+        <h3>What if it was modular?</h3>
+        <p>Start with an intelligent head, then attach mobility, cleaning, arms, or tools only when you actually need them.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">Approach</div>
+        <h3>Software-first, hardware-ready</h3>
+        <p>Build the brain, personality, and coordination layer first. Design hardware contracts so modules can plug in later.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── Platform ──────────────────────────────────────── -->
+<section id="platform">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Platform</span>
+        <h2 class="section-title">Orion Head</h2>
+      </div>
+      <p class="section-sub">The head is the core product: the face, brain, personality, memory, camera, audio system, and module coordinator.</p>
+    </div>
+    <div class="product-showcase">
+      <div class="big-visual">
+        <svg viewBox="0 0 900 620" role="img" aria-label="Orion Head product diagram" style="max-width:100%;padding:1.5rem;">
+          <defs>
+            <linearGradient id="bodyShell2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f8fafc"/><stop offset=".55" stop-color="#94a3b8"/><stop offset="1" stop-color="#475569"/>
+            </linearGradient>
+          </defs>
+          <rect x="40" y="40" width="820" height="540" rx="24" fill="rgba(0,212,255,.025)" stroke="rgba(0,212,255,.12)"/>
+          <g transform="translate(300,80)">
+            <ellipse cx="150" cy="430" rx="140" ry="28" fill="rgba(0,0,0,.3)"/>
+            <path d="M46 145C52 65 92 25 150 25C208 25 248 65 254 145L264 300C268 365 232 402 150 402C68 402 32 365 36 300L46 145Z" fill="url(#bodyShell2)" stroke="rgba(255,255,255,.45)" stroke-width="2"/>
+            <path d="M72 154C78 105 106 82 150 82C194 82 222 105 228 154L237 265C241 309 211 334 150 334C89 334 59 309 63 265L72 154Z" fill="#060b14" stroke="rgba(0,212,255,.3)" stroke-width="2.5"/>
+            <rect x="103" y="188" width="42" height="26" rx="13" fill="#00d4ff"/>
+            <rect x="156" y="188" width="42" height="26" rx="13" fill="#00d4ff"/>
+            <path d="M116 256C132 268 168 268 184 256" stroke="#00d4ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <circle cx="36" cy="220" r="20" fill="#475569" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+            <circle cx="264" cy="220" r="20" fill="#475569" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+            <path d="M129 402h42l12 50h-66z" fill="#334155"/>
+            <rect x="86" y="448" width="128" height="24" rx="12" fill="#1e293b"/>
+            <path d="M150 25V0" stroke="#00d4ff" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="150" cy="-8" r="9" fill="#7c3aed"/>
+          </g>
+          <g font-family="Inter, sans-serif" font-size="16" fill="#cce8f4">
+            <line x1="565" y1="180" x2="685" y2="120" stroke="#00d4ff" stroke-width="1.5"/>
+            <circle cx="685" cy="120" r="4" fill="#00d4ff"/>
+            <text x="698" y="125" font-size="15">Camera + vision</text>
+            <line x1="575" y1="285" x2="700" y2="280" stroke="#00d4ff" stroke-width="1.5"/>
+            <circle cx="700" cy="280" r="4" fill="#00d4ff"/>
+            <text x="713" y="285" font-size="15">Mic array + speaker</text>
+            <line x1="510" y1="420" x2="685" y2="470" stroke="#00d4ff" stroke-width="1.5"/>
+            <circle cx="685" cy="470" r="4" fill="#00d4ff"/>
+            <text x="698" y="476" font-size="15">Expansion dock</text>
+            <line x1="365" y1="270" x2="205" y2="268" stroke="#7c3aed" stroke-width="1.5"/>
+            <circle cx="205" cy="268" r="4" fill="#7c3aed"/>
+            <text x="55" y="273" font-size="15" fill="#a78bfa">Expressive display</text>
+          </g>
+        </svg>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr;gap:0.75rem;">
+        <div class="card">
+          <div class="card-tag">Base product</div>
+          <h3>Orion Head Developer Kit</h3>
+          <p>Conversational AI, camera, microphones, speaker, animated face, local runtime, cloud connectivity, and expansion ports.</p>
+        </div>
+        <div class="card">
+          <div class="card-tag">Design goal</div>
+          <h3>Affordable entry point</h3>
+          <p>The head should be the smallest possible commitment — a useful standalone device even before any modules are added.</p>
+        </div>
+        <div class="card">
+          <div class="card-tag">Core promise</div>
+          <h3>One brain, many bodies</h3>
+          <p>The same Orion Head becomes a desk assistant, patrol robot, vacuum robot, yard helper, or specialty platform.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── Modules ───────────────────────────────────────── -->
+<section id="modules">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Modules</span>
+        <h2 class="section-title">Accessory ecosystem</h2>
+      </div>
+      <p class="section-sub">Modules attach to Orion through mechanical, electrical, and software capability contracts.</p>
+    </div>
+
+    <div class="module-item">
+      <div class="module-icon">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
+          <rect x="20" y="54" width="60" height="24" rx="12" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+          <circle cx="32" cy="78" r="9" fill="#060b14" stroke="#00d4ff" stroke-width="3"/>
+          <circle cx="68" cy="78" r="9" fill="#060b14" stroke="#00d4ff" stroke-width="3"/>
+          <path d="M38 54V35h24v19" stroke="#7c3aed" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <rect x="34" y="26" width="32" height="18" rx="6" fill="#475569"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Mobility Base</h3>
+        <p>Turns Orion into a mobile assistant that can drive, dock, patrol, and follow.</p>
+
+      </div>
+    </div>
+
+    <div class="module-item">
+      <div class="module-icon">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
+          <circle cx="28" cy="72" r="10" fill="#1e293b" stroke="#00d4ff" stroke-width="3"/>
+          <path d="M30 66L45 42L64 50L74 25" stroke="#94a3b8" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="45" cy="42" r="8" fill="#475569"/>
+          <circle cx="64" cy="50" r="8" fill="#475569"/>
+          <path d="M73 23L84 18M74 26L85 31" stroke="#7c3aed" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Robotic Arm</h3>
+        <p>Enables light object interaction, simple picking, button pressing, and future chore workflows.</p>
+
+      </div>
+    </div>
+
+    <div class="module-item">
+      <div class="module-icon">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
+          <rect x="18" y="42" width="64" height="32" rx="16" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+          <circle cx="33" cy="74" r="7" fill="#060b14"/>
+          <circle cx="67" cy="74" r="7" fill="#060b14"/>
+          <path d="M29 42C33 27 67 27 71 42" stroke="#00d4ff" stroke-width="4" fill="none"/>
+          <path d="M33 55H67" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Vacuum Module</h3>
+        <p>Provides floor cleaning capability without forcing every customer to buy cleaning on day one.</p>
+
+      </div>
+    </div>
+
+    <div class="module-item">
+      <div class="module-icon">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
+          <path d="M50 22V76" stroke="#94a3b8" stroke-width="8" stroke-linecap="round"/>
+          <path d="M30 72C36 80 64 80 70 72" stroke="#00d4ff" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <path d="M33 28H67" stroke="#7c3aed" stroke-width="7" stroke-linecap="round"/>
+          <path d="M38 35L28 53M50 35L50 58M62 35L72 53" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Broom / Sweeper Module</h3>
+        <p>A low-cost utility attachment for dust, crumbs, garages, patios, and lightweight cleaning tasks.</p>
+
+      </div>
+    </div>
+
+    <div class="module-item">
+      <div class="module-icon">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none">
+          <rect x="23" y="30" width="54" height="42" rx="14" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+          <circle cx="50" cy="51" r="13" fill="#060b14" stroke="#00d4ff" stroke-width="4"/>
+          <circle cx="50" cy="51" r="5" fill="#7c3aed"/>
+          <path d="M32 75h36" stroke="#00d4ff" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Security Patrol Module</h3>
+        <p>Camera, lights, siren, patrol scheduling, alerts, and room-level monitoring for the home.</p>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── Architecture ──────────────────────────────────── -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Architecture</span>
+        <h2 class="section-title">Platform architecture</h2>
+      </div>
+      <p class="section-sub">Orion is not one robot. It is a modular robotics operating system with a standard way to discover, validate, and control capabilities.</p>
+    </div>
+    <div class="arch-panel">
+      <div class="layer">
+        <strong>React Command Center</strong>
+        <span>Home screen for chat, live camera, telemetry, command buttons, logs, routines, and module management.</span>
+      </div>
+      <div class="layer">
+        <strong>Rust Backend / Orion Core</strong>
+        <span>Axum APIs, WebSockets, command queue, auth, memory, safety gates, telemetry, and LLM orchestration.</span>
+      </div>
+      <div class="layer">
+        <strong>Orion OS Runtime</strong>
+        <span>Containerized runtime on the Orion Head: speech, vision, task planning, module discovery, and OTA updates.</span>
+      </div>
+      <div class="layer">
+        <strong>ROS 2 Robot Layer</strong>
+        <span>Nodes for camera, audio, motion, navigation, behavior, battery, sensors, and telemetry.</span>
+      </div>
+      <div class="layer">
+        <strong>Microcontroller Layer</strong>
+        <span>ESP32/STM32 for real-time motor control, servos, encoders, LEDs, sensors, and emergency stop.</span>
+      </div>
+      <div class="layer" style="margin-bottom:0;">
+        <strong>Accessory Modules</strong>
+        <span>Each module exposes a capability contract: vacuum, sweep, carry, patrol, shovel, dock, follow, or manipulate.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── Capability Contract ───────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Contracts</span>
+        <h2 class="section-title">Capability contract</h2>
+      </div>
+      <p class="section-sub">Every module tells Orion what it is, what it can do, what risks exist, and what commands it accepts.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Example: Vacuum Module</h3>
+        <div class="code-block">{
+  <span class="code-key">"module"</span>:       <span class="code-str">"vacuum"</span>,
+  <span class="code-key">"version"</span>:      <span class="code-str">"1.0"</span>,
+  <span class="code-key">"capabilities"</span>: [
+    <span class="code-str">"vacuum_room"</span>,
+    <span class="code-str">"spot_clean"</span>,
+    <span class="code-str">"return_to_dock"</span>,
+    <span class="code-str">"report_bin_status"</span>
+  ],
+  <span class="code-key">"risk_level"</span>:    <span class="code-str">"medium"</span>,
+  <span class="code-key">"requires_confirmation"</span>: <span class="code-num">false</span>
+}</div>
+      </div>
+      <div class="card">
+        <h3>Why this matters</h3>
+        <p>This is what makes the platform extensible. If Orion understands modules through standard contracts, any new hardware can describe its own capabilities rather than requiring custom code for each one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── Roadmap ───────────────────────────────────────── -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Roadmap</span>
+        <h2 class="section-title">Build phases</h2>
+      </div>
+      <p class="section-sub">Start with a magical demo, evolve into a developer platform, and eventually build a consumer ecosystem.</p>
+    </div>
+    <div class="timeline">
+      <div class="phase"><div class="phase-num"></div><div class="card"><h3>Conversational Orion Head</h3><p>Voice in, LLM reasoning, voice out, expressive face, React dashboard, and memory.</p></div></div>
+      <div class="phase"><div class="phase-num"></div><div class="card"><h3>Embodied expression</h3><p>Animated eyes, head pan/tilt, camera awareness, wake word, and personality system.</p></div></div>
+      <div class="phase"><div class="phase-num"></div><div class="card"><h3>Module interface</h3><p>Design electrical/mechanical expansion standard and software capability contracts.</p></div></div>
+      <div class="phase"><div class="phase-num"></div><div class="card"><h3>Mobility + cleaning</h3><p>Add mobile base, docking, patrol mode, vacuum/sweeper modules, and safety boundaries.</p></div></div>
+      <div class="phase"><div class="phase-num"></div><div class="card"><h3>Developer kit</h3><p>Package Orion Head + SDK + docs + sample accessories for early builders and testers.</p></div></div>
+      <div class="phase"><div class="phase-num"></div><div class="card"><h3>Marketplace ecosystem</h3><p>Third-party modules, skills, routines, subscription services, and specialized verticals.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── What's Built ─────────────────────────────────── -->
+<hr class="divider"/>
+
+<section id="current">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label">Current state</span>
+        <h2 class="section-title">What's built so far</h2>
+      </div>
+      <p class="section-sub">Phase 1 is complete — a fully working AI assistant with voice in, voice out, and a HUD command center.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="card-tag">✅ Done</div>
+        <h3>Conversational AI</h3>
+        <p>Rust/Axum backend with Anthropic Claude. Orion responds naturally, remembers context, and knows it's physically present in a room.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">✅ Done</div>
+        <h3>Full voice pipeline</h3>
+        <p>ElevenLabs TTS + STT. Speak to Orion, get a spoken response back. Push-to-talk with real-time audio playback.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">✅ Done</div>
+        <h3>HUD command center</h3>
+        <p>React + Three.js dashboard with animated rings, live event log, system status panel, chat panel, and quick command buttons.</p>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:1rem;">
+      <div class="card" style="border-color:var(--border-cyan);">
+        <div class="card-tag">Stack</div>
+        <h3>Tech used</h3>
+        <p style="margin-bottom:0.75rem;">React 18 · TypeScript · Vite · Tailwind · Three.js · Framer Motion · Zustand</p>
+        <p>Rust · Axum · Anthropic API · ElevenLabs TTS/STT · WebSockets</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">Up next</div>
+        <h3>In progress / planned</h3>
+        <ul style="padding-left:1.1rem;color:var(--text-dim);font-size:0.9rem;line-height:2;">
+          <li>Animated robot head (servo pan/tilt)</li>
+          <li>Camera + vision integration</li>
+          <li>Wake word detection</li>
+          <li>Mobile base prototype</li>
+          <li>Module capability contracts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Mission CTA ───────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="card" style="text-align:center;padding:3rem 2rem;background:linear-gradient(160deg,rgba(0,212,255,0.05),rgba(124,58,237,0.05));border-color:var(--border-cyan);">
+      <span class="section-label">About this project</span>
+      <h2 class="section-title" style="margin-bottom:1rem;">A personal exploration</h2>
+      <p style="max-width:640px;margin:0 auto;color:var(--text-dim);font-size:1.05rem;line-height:1.7;">Orion is a hobby project. The goal is to explore what a modular, AI-driven home robot could feel like — starting with the software brain and building toward real hardware over time. Not a company, just a project.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="brand">
+      <div class="nav-logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="8" stroke="#00d4ff" stroke-width="1.5"/>
+          <path d="M12 4V1M12 23v-3M20 12h3M1 12h3" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Orion Robotics
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.35rem;">
+      <p>A <a href="https://csageapplications.github.io/RIVAL-pages/" target="_blank" rel="noopener" style="color:var(--cyan);opacity:0.85;font-weight:600;">R!O1 Labs</a> project</p>
+      <p>Personal project · <a href="https://github.com/CsageApplications/Project-Orion" style="color:var(--cyan);opacity:0.7;">View on GitHub</a></p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+
