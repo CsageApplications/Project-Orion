@@ -45,8 +45,19 @@ The command center UI will be available at `http://localhost:3000`.
 
 ```bash
 cd backend-rust
-cp .env.example .env  # then fill in OPENAI_API_KEY or ANTHROPIC_API_KEY
+cp .env.example .env  # then fill in keys — see below
 cargo run
+```
+
+Required keys in `backend-rust/.env`:
+
+```env
+LLM_PROVIDER=anthropic
+LLM_MODEL=claude-3-5-sonnet-latest
+ANTHROPIC_API_KEY=sk-ant-...
+
+ELEVENLABS_API_KEY=...          # used for both TTS and STT
+ELEVENLABS_VOICE_ID=pNInz6obpgDQGcFmaJgB  # Adam (default)
 ```
 
 The backend API will be available at `http://localhost:8080`.
@@ -57,7 +68,9 @@ Key endpoints:
 GET  /health                  — health check
 GET  /api/robot/status        — current robot state
 POST /api/robot/command       — send a command (PATROL, DOCK, STOP, etc.)
-POST /api/chat                — send a message to Orion
+POST /api/chat                — send a message to Orion (LLM response)
+POST /api/tts                 — text → MP3 bytes (ElevenLabs)
+POST /api/stt                 — audio bytes → transcript (ElevenLabs Scribe)
 WS   /ws                      — WebSocket telemetry stream
 ```
 
@@ -75,10 +88,34 @@ Output is written to `frontend-react/dist/`.
 - The frontend will show backend status as `OFFLINE` until the backend is running on `http://localhost:8080`.
 - Postgres is optional for Phase 1 — the backend runs without a database connection (DB calls are commented out until needed).
 - All environment variables are documented in `.env.example` at the root.
+- Voice features require `ELEVENLABS_API_KEY` in `backend-rust/.env`. The same key is used for both TTS and STT — ensure both capabilities are enabled on the key in your ElevenLabs dashboard.
+- Microphone access is required for STT. Browsers prompt for permission on first use.
 
 ---
 
-## Vision
+## Voice Pipeline
+
+Orion has a complete voice loop:
+
+```
+Microphone
+    ↓  (MediaRecorder — webm/opus)
+POST /api/stt  (ElevenLabs Scribe v1)
+    ↓  transcript
+POST /api/chat  (Anthropic Claude claude-3-5-sonnet-latest)
+    ↓  reply text
+POST /api/tts  (ElevenLabs eleven_turbo_v2_5, Adam voice)
+    ↓  MP3 bytes
+Web Audio API → speakers + waveform visualizer
+```
+
+- **STT**: `useVoiceInput` hook records mic via `MediaRecorder`, sends raw audio to `/api/stt`, fires transcript into the chat input
+- **LLM**: Orion is prompted as a physically-present home robot with speakers — it understands room-level announcements, not just text chat
+- **TTS**: Every Orion reply is automatically spoken aloud; the waveform visualizer reacts to real `AnalyserNode` frequency data
+- **Tap to speak**: The center HUD panel toggles mic recording — tap to start, tap again to stop and send
+
+---
+
 
 Orion is designed to live in the home as a calm, intelligent, and useful assistant. The goal is not a toy or a gimmick — it is an embodied AI platform that can speak, listen, see, move, and eventually help with real-world tasks.
 
@@ -211,9 +248,12 @@ Project Orion is currently in **Phase 1 — Desktop AI Assistant**.
 
 | Component | Status |
 |---|---|
-| React command center (JARVIS HUD) | Complete — running on `localhost:3000` |
-| Rust/Axum backend | Scaffolded — API, WebSocket, LLM gateway |
-| LLM integration | Implemented — requires API key to activate |
+| React command center (JARVIS HUD) | ✅ Complete — running on `localhost:3000` |
+| Rust/Axum backend | ✅ Complete — API, WebSocket, LLM/TTS/STT |
+| LLM integration | ✅ Complete — Anthropic Claude via `/api/chat` |
+| ElevenLabs TTS | ✅ Complete — voice replies auto-spoken, waveform visualizer |
+| ElevenLabs STT | ✅ Complete — mic input via `/api/stt`, tap to speak |
+| Full voice loop | ✅ Complete — mic → STT → LLM → TTS → speakers |
 | Postgres schema | Migrations written — pending DB setup |
 | Robot hardware | Phase 2 |
 | ROS 2 integration | Phase 3 |
