@@ -1,0 +1,160 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "a1b2c3d4-0001-0000-0000-000000000001")
+  (paper "A2")
+  (title_block
+    (title "Orion Carrier Board — Top Level")
+    (date "2026-05-17")
+    (rev "A")
+    (company "Project Orion / R!O1 Labs")
+    (comment 1 "2-layer FR4, JLCPCB, 100x80mm")
+    (comment 2 "Jetson Orin Nano + RP2040 + ORION-EX expansion")
+    (comment 3 "Status: SCHEMATIC IN PROGRESS — v0.1")
+  )
+
+  ;; ─── Inline power symbols ───────────────────────────────────────────────────
+  (lib_symbols
+    (symbol "PWR_FLAG"
+      (power)
+      (pin_names (offset 0))
+      (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 -3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value"     "PWR_FLAG" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "PWR_FLAG_0_1"
+        (pin power_in (at 0 0 0) (length 0) (name "PWR" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "GND"
+      (power)
+      (pin_names (offset 0))
+      (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 -3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value"     "GND" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "GND_0_1"
+        (polyline (pts (xy 0 0) (xy 0 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.762 -1.905) (xy 0.762 -1.905)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.254 -2.54) (xy 0.254 -2.54)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  ;; ─── Sheet: Power ───────────────────────────────────────────────────────────
+  (sheet
+    (at 30 30)
+    (size 60 40)
+    (fields_autoplaced yes)
+    (stroke (width 0.15) (type default))
+    (fill (color 255 255 204 0.1))
+    (uuid "a1b2c3d4-0001-0000-0000-000000000010")
+    (property "Sheetname" "Power" (at 30 28.5 0)
+      (effects (font (size 1.7 1.7) bold)))
+    (property "Sheetfile" "power.kicad_sch" (at 30 70.7 0)
+      (effects (font (size 1.27 1.27)) hide))
+    ;; Sheet pins — power rails exported to other sheets
+    (pin "+12V_IN"  input  (at 30 35 270) (effects (font (size 1.27 1.27))))
+    (pin "SYS_5V"   output (at 50 30 90)  (effects (font (size 1.27 1.27))))
+    (pin "SERVO_6V" output (at 60 30 90)  (effects (font (size 1.27 1.27))))
+    (pin "SYS_3V3"  output (at 70 30 90)  (effects (font (size 1.27 1.27))))
+    (pin "EXP_12V"  output (at 80 30 90)  (effects (font (size 1.27 1.27))))
+    (pin "PWR_EN"   input  (at 90 35 270) (effects (font (size 1.27 1.27))))
+    (pin "GND"      power_in (at 30 70 270) (effects (font (size 1.27 1.27))))
+  )
+
+  ;; ─── Sheet: Compute (Jetson + RP2040) ───────────────────────────────────────
+  (sheet
+    (at 110 30)
+    (size 70 40)
+    (fields_autoplaced yes)
+    (stroke (width 0.15) (type default))
+    (fill (color 204 229 255 0.1))
+    (uuid "a1b2c3d4-0001-0000-0000-000000000020")
+    (property "Sheetname" "Compute" (at 110 28.5 0)
+      (effects (font (size 1.7 1.7) bold)))
+    (property "Sheetfile" "compute.kicad_sch" (at 110 70.7 0)
+      (effects (font (size 1.27 1.27)) hide))
+    (pin "SYS_5V"      input    (at 110 35 270) (effects (font (size 1.27 1.27))))
+    (pin "SYS_3V3"     input    (at 120 30 90)  (effects (font (size 1.27 1.27))))
+    (pin "GND"         power_in (at 110 70 270) (effects (font (size 1.27 1.27))))
+    (pin "MCU_TX"      output   (at 180 35 270) (effects (font (size 1.27 1.27))))
+    (pin "MCU_RX"      input    (at 180 45 270) (effects (font (size 1.27 1.27))))
+    (pin "I2C0_SDA"    bidirectional (at 180 55 270) (effects (font (size 1.27 1.27))))
+    (pin "I2C0_SCL"    output   (at 180 65 270) (effects (font (size 1.27 1.27))))
+    (pin "PWM_SERVOS"  output   (at 180 75 90)  (effects (font (size 1.27 1.27))))
+    (pin "WS2812_DATA" output   (at 180 85 90)  (effects (font (size 1.27 1.27))))
+    (pin "PWR_EN"      output   (at 110 95 90)  (effects (font (size 1.27 1.27))))
+  )
+
+  ;; ─── Sheet: I/O & Connectors ────────────────────────────────────────────────
+  (sheet
+    (at 30 100)
+    (size 70 40)
+    (fields_autoplaced yes)
+    (stroke (width 0.15) (type default))
+    (fill (color 204 255 204 0.1))
+    (uuid "a1b2c3d4-0001-0000-0000-000000000030")
+    (property "Sheetname" "IO_Connectors" (at 30 98.5 0)
+      (effects (font (size 1.7 1.7) bold)))
+    (property "Sheetfile" "io.kicad_sch" (at 30 70.7 0)
+      (effects (font (size 1.27 1.27)) hide))
+    (pin "SYS_5V"      input    (at 30 105 270) (effects (font (size 1.27 1.27))))
+    (pin "SYS_3V3"     input    (at 40 100 90)  (effects (font (size 1.27 1.27))))
+    (pin "SERVO_6V"    input    (at 50 100 90)  (effects (font (size 1.27 1.27))))
+    (pin "GND"         power_in (at 30 140 270) (effects (font (size 1.27 1.27))))
+    (pin "MCU_TX"      input    (at 100 105 270) (effects (font (size 1.27 1.27))))
+    (pin "MCU_RX"      output   (at 100 115 270) (effects (font (size 1.27 1.27))))
+    (pin "I2C0_SDA"    bidirectional (at 100 125 270) (effects (font (size 1.27 1.27))))
+    (pin "I2C0_SCL"    input    (at 100 135 270) (effects (font (size 1.27 1.27))))
+    (pin "PWM_SERVOS"  input    (at 100 145 90)  (effects (font (size 1.27 1.27))))
+    (pin "WS2812_DATA" input    (at 100 155 90)  (effects (font (size 1.27 1.27))))
+  )
+
+  ;; ─── Sheet: Expansion (ORION-EX) ────────────────────────────────────────────
+  (sheet
+    (at 110 100)
+    (size 60 40)
+    (fields_autoplaced yes)
+    (stroke (width 0.15) (type default))
+    (fill (color 255 204 229 0.1))
+    (uuid "a1b2c3d4-0001-0000-0000-000000000040")
+    (property "Sheetname" "Expansion_ORIONEX" (at 110 98.5 0)
+      (effects (font (size 1.7 1.7) bold)))
+    (property "Sheetfile" "expansion.kicad_sch" (at 110 70.7 0)
+      (effects (font (size 1.27 1.27)) hide))
+    (pin "EXP_12V"   input    (at 110 105 270) (effects (font (size 1.27 1.27))))
+    (pin "SYS_3V3"   input    (at 120 100 90)  (effects (font (size 1.27 1.27))))
+    (pin "GND"       power_in (at 110 140 270) (effects (font (size 1.27 1.27))))
+    (pin "PWR_EN"    input    (at 170 105 270) (effects (font (size 1.27 1.27))))
+    (pin "CAN_TX"    input    (at 170 115 270) (effects (font (size 1.27 1.27))))
+    (pin "CAN_RX"    output   (at 170 125 270) (effects (font (size 1.27 1.27))))
+    (pin "ID_1W"     bidirectional (at 170 135 270) (effects (font (size 1.27 1.27))))
+    (pin "UART_TX"   input    (at 170 145 270) (effects (font (size 1.27 1.27))))
+    (pin "UART_RX"   output   (at 170 155 270) (effects (font (size 1.27 1.27))))
+  )
+
+  ;; ─── Net wires connecting sheets ───────────────────────────────────────────
+  ;; SYS_5V: Power → Compute
+  (wire (pts (xy 55 30) (xy 55 25) (xy 145 25) (xy 145 30)))
+  ;; SYS_3V3: Power → Compute, IO
+  (wire (pts (xy 65 30) (xy 65 20) (xy 155 20) (xy 155 30)))
+  ;; SERVO_6V: Power → IO
+  (wire (pts (xy 75 30) (xy 75 15) (xy 65 15) (xy 65 100)))
+  ;; EXP_12V: Power → Expansion
+  (wire (pts (xy 85 30) (xy 85 10) (xy 125 10) (xy 125 100)))
+  ;; MCU_TX/RX: Compute → IO
+  (wire (pts (xy 180 35) (xy 195 35) (xy 195 105) (xy 100 105)))
+  (wire (pts (xy 180 45) (xy 200 45) (xy 200 115) (xy 100 115)))
+  ;; PWR_EN: Compute → Power, Expansion
+  (wire (pts (xy 110 95) (xy 28 95) (xy 28 40) (xy 30 40)))
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

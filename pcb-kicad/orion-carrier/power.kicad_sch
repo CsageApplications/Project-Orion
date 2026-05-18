@@ -1,0 +1,501 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "a1b2c3d4-0002-0000-0000-000000000001")
+  (paper "A2")
+  (title_block
+    (title "Orion Carrier Board — Power Supply")
+    (date "2026-05-17")
+    (rev "A")
+    (company "Project Orion / R!O1 Labs")
+    (comment 1 "Sheet 2/5 — Power rails: SYS_5V, SERVO_6V, SYS_3V3, EXP_12V")
+    (comment 2 "Buck: TPS54540 (x2)  LDO: LM3940  Switch: TPS22965")
+  )
+
+  ;; ──────────────────────────────────────────────────────────────────────────────
+  ;; Inline lib symbols (pin-accurate from datasheets)
+  ;; ──────────────────────────────────────────────────────────────────────────────
+  (lib_symbols
+
+    ;; ── GND power symbol ────────────────────────────────────────────────────────
+    (symbol "GND"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 -3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "GND" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "GND_0_1"
+        (polyline (pts (xy 0 0) (xy 0 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.762 -1.905) (xy 0.762 -1.905)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.254 -2.54) (xy 0.254 -2.54)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── +12V power symbol ───────────────────────────────────────────────────────
+    (symbol "+12V"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "+12V" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "+12V_0_1"
+        (polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.635 1.27) (xy 0 2.54) (xy 0.635 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "+12V" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── SYS_5V power symbol ─────────────────────────────────────────────────────
+    (symbol "SYS_5V"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "SYS_5V" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "SYS_5V_0_1"
+        (polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.635 1.27) (xy 0 2.54) (xy 0.635 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "SYS_5V" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── SERVO_6V power symbol ────────────────────────────────────────────────────
+    (symbol "SERVO_6V"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "SERVO_6V" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "SERVO_6V_0_1"
+        (polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.635 1.27) (xy 0 2.54) (xy 0.635 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "SERVO_6V" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── SYS_3V3 power symbol ─────────────────────────────────────────────────────
+    (symbol "SYS_3V3"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "SYS_3V3" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "SYS_3V3_0_1"
+        (polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.635 1.27) (xy 0 2.54) (xy 0.635 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "SYS_3V3" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── EXP_12V power symbol ─────────────────────────────────────────────────────
+    (symbol "EXP_12V"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "EXP_12V" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "EXP_12V_0_1"
+        (polyline (pts (xy 0 0) (xy 0 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.635 1.27) (xy 0 2.54) (xy 0.635 1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "EXP_12V" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── TPS54540 — 4A Synchronous Buck (HTSSOP-14 / PWP) ─────────────────────────
+    ;; Pins: BOOT(1) VIN(2,9) EN(3) SS/TR(4) VSENSE(5) COMP(6) PH(7,8) PAD(EP)
+    (symbol "TPS54540"
+      (pin_names (offset 1.016))
+      (property "Reference" "U" (at 0 10.16 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "TPS54540" (at 0 -10.16 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_SO:HTSSOP-14-1EP_4.4x5mm_P0.65mm_EP3.4x5mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps54540.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C35004" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "TPS54540_0_1"
+        ;; Body
+        (rectangle (start -8.89 -8.89) (end 8.89 8.89) (stroke (width 0.254) (type default)) (fill (type background)))
+        ;; Pins - left side
+        (pin input       (at -13.97  6.35 0) (length 5.08) (name "BOOT"    (effects (font (size 1.27 1.27)))) (number "1"  (effects (font (size 1.27 1.27)))))
+        (pin power_in    (at -13.97  3.81 0) (length 5.08) (name "VIN"     (effects (font (size 1.27 1.27)))) (number "2"  (effects (font (size 1.27 1.27)))))
+        (pin input       (at -13.97  1.27 0) (length 5.08) (name "EN"      (effects (font (size 1.27 1.27)))) (number "3"  (effects (font (size 1.27 1.27)))))
+        (pin input       (at -13.97 -1.27 0) (length 5.08) (name "SS/TR"   (effects (font (size 1.27 1.27)))) (number "4"  (effects (font (size 1.27 1.27)))))
+        (pin input       (at -13.97 -3.81 0) (length 5.08) (name "VSENSE"  (effects (font (size 1.27 1.27)))) (number "5"  (effects (font (size 1.27 1.27)))))
+        (pin output      (at -13.97 -6.35 0) (length 5.08) (name "COMP"    (effects (font (size 1.27 1.27)))) (number "6"  (effects (font (size 1.27 1.27)))))
+        ;; Pins - right side (PH, VIN duplicate)
+        (pin power_out   (at  13.97  3.81 180) (length 5.08) (name "PH"    (effects (font (size 1.27 1.27)))) (number "7"  (effects (font (size 1.27 1.27)))))
+        (pin power_out   (at  13.97  1.27 180) (length 5.08) (name "PH"    (effects (font (size 1.27 1.27)))) (number "8"  (effects (font (size 1.27 1.27)))))
+        (pin power_in    (at  13.97 -1.27 180) (length 5.08) (name "VIN"   (effects (font (size 1.27 1.27)))) (number "9"  (effects (font (size 1.27 1.27)))))
+        (pin power_in    (at  13.97 -3.81 180) (length 5.08) (name "VIN"   (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27)))))
+        (pin power_in    (at   0    -13.97 90) (length 5.08) (name "PAD"   (effects (font (size 1.27 1.27)))) (number "EP" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── LM3940 — 1A LDO 5V→3.3V (SOT-223) ──────────────────────────────────────
+    (symbol "LM3940"
+      (pin_names (offset 1.016))
+      (property "Reference" "U" (at 0 5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "LM3940" (at 0 -5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_TO_SOT_SMD:SOT-223-3_TabPin2" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/lm3940.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C102513" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "LM3940_0_1"
+        (rectangle (start -5.08 -3.81) (end 5.08 3.81) (stroke (width 0.254) (type default)) (fill (type background)))
+        (pin power_in  (at -10.16  1.27 0)  (length 5.08) (name "IN"  (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin power_out (at  10.16  1.27 180) (length 5.08) (name "OUT" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin power_in  (at   0    -8.89 90)  (length 5.08) (name "GND" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── TPS22965 — 5.5A Load Switch (SOT-23-6) ──────────────────────────────────
+    (symbol "TPS22965"
+      (pin_names (offset 1.016))
+      (property "Reference" "U" (at 0 5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "TPS22965" (at 0 -5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps22965.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C477456" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "TPS22965_0_1"
+        (rectangle (start -5.08 -5.08) (end 5.08 5.08) (stroke (width 0.254) (type default)) (fill (type background)))
+        (pin power_in  (at -10.16  2.54 0)   (length 5.08) (name "VIN"  (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin input     (at -10.16  0    0)   (length 5.08) (name "ON"   (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin power_in  (at -10.16 -2.54 0)   (length 5.08) (name "GND"  (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin power_out (at  10.16  2.54 180) (length 5.08) (name "VOUT" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+        (pin output    (at  10.16  0    180) (length 5.08) (name "PG"   (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27)))))
+        (pin input     (at  10.16 -2.54 180) (length 5.08) (name "ILIM" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── Generic Resistor ─────────────────────────────────────────────────────────
+    (symbol "R"
+      (pin_numbers hide)
+      (property "Reference" "R" (at 1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value"     "R" (at -1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "R_0_1"
+        (rectangle (start -1.016 -2.54) (end 1.016 2.54) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive (at 0  3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -3.81  90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── Generic Capacitor ────────────────────────────────────────────────────────
+    (symbol "C"
+      (pin_numbers hide)
+      (property "Reference" "C" (at 1.524 0 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "C" (at -1.524 0 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "C_0_1"
+        (polyline (pts (xy -2.032 -0.254) (xy 2.032 -0.254)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (polyline (pts (xy -2.032  0.254) (xy 2.032  0.254)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (pin passive (at 0  1.905 270) (length 1.651) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -1.905  90) (length 1.651) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; ── Generic Inductor ─────────────────────────────────────────────────────────
+    (symbol "L"
+      (pin_numbers hide)
+      (property "Reference" "L" (at 0 2.54 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "L" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "L_0_1"
+        (arc   (start 0 -2.54) (mid -1.27 -1.905) (end 0 -1.27) (stroke (width 0.254) (type default)) (fill (type none)))
+        (arc   (start 0 -1.27) (mid -1.27 -0.635) (end 0  0)    (stroke (width 0.254) (type default)) (fill (type none)))
+        (arc   (start 0  0)    (mid -1.27  0.635)  (end 0  1.27) (stroke (width 0.254) (type default)) (fill (type none)))
+        (arc   (start 0  1.27) (mid -1.27  1.905)  (end 0  2.54) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive (at 0  3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -3.81  90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+  ) ;; end lib_symbols
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION A — 12V Input & Reverse Polarity Protection
+  ;;  J1 (XT30) → D1 (PMEG6010CEA, 60V Schottky ideal diode) → VIN_BUSS
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "A — 12V INPUT &\nREVERSE POLARITY"
+    (at 20 10 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  ;; J1 connector label
+  (global_label "VIN_RAW" (shape input) (at 30 15 0) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0001-0000-000000000001"))
+  (label "J1_P (XT30 +)" (at 20 15 0) (effects (font (size 1.27 1.27)) (justify left)))
+
+  ;; Schottky diode D1 (represented as no-connect + label for now — add Device:D symbol)
+  (no_connect (at 38 15) (uuid "a1b2c3d4-0002-0001-0000-000000000002"))
+  (text "D1: PMEG6010CEA\n60V/1A Schottky\nReverse polarity"
+    (at 38 12 0) (effects (font (size 1.0 1.0)) (justify left)))
+
+  ;; 100µF bulk input cap C1
+  (symbol (lib_id "C") (at 50 18 0) (mirror x) (unit 1)
+    (property "Reference" "C1"  (at 52 18 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100uF 25V"  (at 52 16 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C29917" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0001-0000-000000000010")
+  )
+  ;; 100nF ceramic input decoupling C2
+  (symbol (lib_id "C") (at 57 18 0) (mirror x) (unit 1)
+    (property "Reference" "C2"  (at 59 18 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100nF 25V X5R"  (at 59 16 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1525" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0001-0000-000000000011")
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION B — SYS_5V Buck  (TPS54540, U1)
+  ;;  VIN_BUSS → TPS54540 → 5.0V @ 4A for Jetson Orin Nano
+  ;;  Vout = 0.8V × (1 + R_top/R_bot)  →  R_top=523kΩ, R_bot=100kΩ → 4.984V ≈ 5V
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "B — SYS_5V BUCK (TPS54540, U1)\n5.0V @ 4A — Jetson Orin Nano"
+    (at 20 30 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "TPS54540") (at 60 50 0) (unit 1)
+    (property "Reference" "U1" (at 75 38 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "TPS54540" (at 75 62 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_SO:HTSSOP-14-1EP_4.4x5mm_P0.65mm_EP3.4x5mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C35004" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000001")
+  )
+
+  ;; EN pulled to VIN via 100k R1 (always enabled; could tie to MCU for power management v2)
+  (symbol (lib_id "R") (at 38 43.81 0) (unit 1)
+    (property "Reference" "R1" (at 40 43.81 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100k" (at 40 41.27 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25741" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000002")
+  )
+
+  ;; SS capacitor C3 (47nF) — sets ~1ms soft-start
+  (symbol (lib_id "C") (at 38 48 0) (unit 1)
+    (property "Reference" "C3" (at 40 48 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "47nF X5R" (at 40 46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1532" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000003")
+  )
+
+  ;; BOOT capacitor C4 (100nF) — BOOT to PH bootstrap
+  (symbol (lib_id "C") (at 38 53 0) (unit 1)
+    (property "Reference" "C4" (at 40 53 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100nF 10V X7R" (at 40 51 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1525" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000004")
+  )
+
+  ;; Output inductor L1 — 6.8µH, 5A, low DCR
+  ;; Choice: Bourns SRR1260-6R8Y (LCSC C494056) — 6.8µH, 6.0A saturation
+  (symbol (lib_id "L") (at 90 43.81 0) (unit 1)
+    (property "Reference" "L1" (at 92 43.81 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "6.8uH 6A SRR1260" (at 92 41.27 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Inductor_SMD:L_Bourns_SRR1260" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C494056" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000005")
+  )
+
+  ;; Output bulk cap C5 (100µF, 10V) + ceramic C6,C7 (2×10µF 10V X5R)
+  (symbol (lib_id "C") (at 100 50 0) (unit 1)
+    (property "Reference" "C5" (at 102 50 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100uF 10V" (at 102 48 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C440130" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000006")
+  )
+  (symbol (lib_id "C") (at 107 50 0) (unit 1)
+    (property "Reference" "C6" (at 109 50 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "10uF 10V X5R" (at 109 48 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C19702" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000007")
+  )
+
+  ;; Feedback divider R2 (top, 523k) / R3 (bottom, 100k)
+  ;; Vout = 0.8 × (1 + 523k/100k) = 0.8 × 6.23 = 4.984V ≈ 5.0V ✓
+  (symbol (lib_id "R") (at 100 57 0) (unit 1)
+    (property "Reference" "R2" (at 102 57 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "523k 1%" (at 102 55 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25787" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000008")
+  )
+  (symbol (lib_id "R") (at 100 62 0) (unit 1)
+    (property "Reference" "R3" (at 102 62 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100k 1%" (at 102 60 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25741" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000009")
+  )
+
+  ;; COMP network R4+C8 (Type II compensation — use TI WEBENCH values)
+  (symbol (lib_id "R") (at 38 60 0) (unit 1)
+    (property "Reference" "R4" (at 40 60 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "47.5k WEBENCH" (at 40 58 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25811" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000010")
+  )
+  (symbol (lib_id "C") (at 38 65 0) (unit 1)
+    (property "Reference" "C8" (at 40 65 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "82pF WEBENCH" (at 40 63 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1659" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000011")
+  )
+
+  ;; Power net labels — U1 output
+  (global_label "SYS_5V" (shape output) (at 115 43.81 0) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0002-0000-000000000020"))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION C — SERVO_6V Buck  (TPS54540, U2)
+  ;;  Same topology as U1, different Vout.
+  ;;  Vout = 0.8 × (1 + R_top/R_bot)  →  R_top=650kΩ, R_bot=100kΩ → 6.0V
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "C — SERVO_6V BUCK (TPS54540, U2)\n6.0V @ 4A — Servos (isolated ground star)"
+    (at 20 75 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "TPS54540") (at 60 95 0) (unit 1)
+    (property "Reference" "U2" (at 75 83 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "TPS54540" (at 75 107 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_SO:HTSSOP-14-1EP_4.4x5mm_P0.65mm_EP3.4x5mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C35004" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0003-0000-000000000001")
+  )
+
+  ;; Feedback divider: R5=650k / R6=100k → Vout = 0.8×(1+6.5) = 6.0V ✓
+  (symbol (lib_id "R") (at 100 102 0) (unit 1)
+    (property "Reference" "R5" (at 102 102 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "649k 1%" (at 102 100 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25806" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0003-0000-000000000002")
+  )
+  (symbol (lib_id "R") (at 100 107 0) (unit 1)
+    (property "Reference" "R6" (at 102 107 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100k 1%" (at 102 105 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25741" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0003-0000-000000000003")
+  )
+
+  ;; L2 — 4.7µH, 6A (Bourns SRR1260-4R7Y, LCSC C494050)
+  (symbol (lib_id "L") (at 90 88.81 0) (unit 1)
+    (property "Reference" "L2" (at 92 88.81 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "4.7uH 6A SRR1260" (at 92 86.27 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Inductor_SMD:L_Bourns_SRR1260" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C494050" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0003-0000-000000000004")
+  )
+
+  (global_label "SERVO_6V" (shape output) (at 115 88.81 0) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0003-0000-000000000020"))
+
+  ;; NOTE: SERVO_6V uses a SEPARATE ground star — connect SGND near D1 only!
+  (text "⚠ SERVO_6V: isolated ground star.\nConnect SGND only at D1 bulk cap.\nKeep servo return traces away from logic." 
+    (at 120 90 0) (effects (font (size 1.2 1.2)) (justify left)))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION D — SYS_3V3 LDO  (LM3940, U3)  — from SYS_5V, 1A max
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "D — SYS_3V3 LDO (LM3940, U3)"
+    (at 20 120 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "LM3940") (at 55 130 0) (unit 1)
+    (property "Reference" "U3" (at 62 122 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "LM3940" (at 62 138 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-223-3_TabPin2" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C102513" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0004-0000-000000000001")
+  )
+
+  ;; Input cap C9 (10µF) — required by LM3940 for stability
+  (symbol (lib_id "C") (at 37 127.62 0) (unit 1)
+    (property "Reference" "C9"  (at 39 127.62 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "10uF 10V X5R" (at 39 125.08 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C19702" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0004-0000-000000000002")
+  )
+
+  ;; Output caps C10 (22µF) — required by LM3940, ≥22µF electrolytic or polymer
+  (symbol (lib_id "C") (at 75 127.62 0) (unit 1)
+    (property "Reference" "C10" (at 77 127.62 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "22uF 6.3V" (at 77 125.08 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_1206_3216Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C2832" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0004-0000-000000000003")
+  )
+
+  (global_label "SYS_3V3" (shape output) (at 88 130 0) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0004-0000-000000000010"))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION E — EXP_12V Load Switch  (TPS22965, U4)
+  ;;  12V passthrough, switched by MCU PWR_EN — module must pass ID check first
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "E — EXP_12V LOAD SWITCH (TPS22965, U4)\n12V switched — MCU asserts PWR_EN after module ID"
+    (at 20 150 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "TPS22965") (at 65 165 0) (unit 1)
+    (property "Reference" "U4" (at 72 157 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "TPS22965" (at 72 173 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C477456" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0005-0000-000000000001")
+  )
+
+  ;; R7 on ILIM pin — sets current limit (see TPS22965 datasheet Table 1)
+  ;; RILIM = 3.168 / ILIM_A → for 3A: R = 3.168/3 = 1.056kΩ → use 1.05kΩ
+  (symbol (lib_id "R") (at 88 167.54 0) (unit 1)
+    (property "Reference" "R7" (at 90 167.54 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "1.05k 1% (ILIM=3A)" (at 90 165 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25752" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0005-0000-000000000002")
+  )
+
+  ;; C11 on output (100µF for hot-plug transient)
+  (symbol (lib_id "C") (at 88 158 0) (unit 1)
+    (property "Reference" "C11" (at 90 158 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "100uF 16V" (at 90 156 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_1210_3225Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C29917" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0002-0005-0000-000000000003")
+  )
+
+  ;; PWR_EN net label (driven by RP2040 GPIO)
+  (global_label "PWR_EN" (shape input) (at 42 162.46 180) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0005-0000-000000000010"))
+
+  (global_label "EXP_12V" (shape output) (at 105 162.46 0) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0005-0000-000000000011"))
+
+  ;; PG output — power good signal back to MCU (optional GPIO monitor)
+  (global_label "EXP_PG" (shape output) (at 105 165 0) (length 2.54)
+    (effects (font (size 1.27 1.27)))
+    (uuid "a1b2c3d4-0002-0005-0000-000000000012"))
+
+  (sheet_instances
+    (path "/a1b2c3d4-0001-0000-0000-000000000010/" (page "2"))
+  )
+)

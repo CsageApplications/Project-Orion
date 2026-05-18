@@ -1,0 +1,239 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "a1b2c3d4-0003-0000-0000-000000000001")
+  (paper "A2")
+  (title_block
+    (title "Orion Carrier Board — Compute")
+    (date "2026-05-17")
+    (rev "A")
+    (company "Project Orion / R!O1 Labs")
+    (comment 1 "Sheet 3/5 — Jetson Orin Nano SO-DIMM + RP2040 MCU")
+    (comment 2 "TODO: Add Jetson SO-DIMM symbol from Jetson_Nano library")
+    (comment 3 "RP2040 pins: UART0(TX=GPIO0,RX=GPIO1) I2C0(SDA=GPIO4,SCL=GPIO5)")
+    (comment 4 "Servo PWM via PCA9685 on I2C0. WS2812 on GPIO16 (PIO)")
+  )
+
+  (lib_symbols
+    ;; GND (same definition as power sheet)
+    (symbol "GND"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 -3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "GND" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "GND_0_1"
+        (polyline (pts (xy 0 0) (xy 0 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.762 -1.905) (xy 0.762 -1.905)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.254 -2.54) (xy 0.254 -2.54)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; RP2040 — Dual Cortex-M0+ (QFN-56) — partial symbol
+    ;; Full pinout: https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf
+    (symbol "RP2040"
+      (pin_names (offset 1.016))
+      (property "Reference" "U" (at 0 20.32 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "RP2040" (at 0 -20.32 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_DFN_QFN:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C2040" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "RP2040_0_1"
+        (rectangle (start -15.24 -17.78) (end 15.24 17.78) (stroke (width 0.254) (type default)) (fill (type background)))
+        ;; Power pins
+        (pin power_in  (at -20.32  15.24 0)   (length 5.08) (name "IOVDD"   (effects (font (size 1.27 1.27)))) (number "1"  (effects (font (size 1.27 1.27)))))
+        (pin power_in  (at -20.32  12.7  0)   (length 5.08) (name "DVDD"    (effects (font (size 1.27 1.27)))) (number "23" (effects (font (size 1.27 1.27)))))
+        (pin power_in  (at -20.32  10.16 0)   (length 5.08) (name "VREG_IN" (effects (font (size 1.27 1.27)))) (number "33" (effects (font (size 1.27 1.27)))))
+        (pin power_out (at -20.32  7.62  0)   (length 5.08) (name "VREG_OUT"(effects (font (size 1.27 1.27)))) (number "I"  (effects (font (size 1.27 1.27)))))
+        (pin power_in  (at -20.32  5.08  0)   (length 5.08) (name "USB_VDD" (effects (font (size 1.27 1.27)))) (number "L"  (effects (font (size 1.27 1.27)))))
+        (pin power_in  (at   0    -22.86 90)  (length 5.08) (name "GND"     (effects (font (size 1.27 1.27)))) (number "EP" (effects (font (size 1.27 1.27)))))
+        ;; UART0
+        (pin bidirectional (at -20.32  2.54 0)  (length 5.08) (name "GPIO0/UART0_TX" (effects (font (size 1.27 1.27)))) (number "2"  (effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at -20.32  0    0)  (length 5.08) (name "GPIO1/UART0_RX" (effects (font (size 1.27 1.27)))) (number "3"  (effects (font (size 1.27 1.27)))))
+        ;; I2C0
+        (pin bidirectional (at -20.32 -2.54 0)  (length 5.08) (name "GPIO4/I2C0_SDA" (effects (font (size 1.27 1.27)))) (number "6"  (effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at -20.32 -5.08 0)  (length 5.08) (name "GPIO5/I2C0_SCL" (effects (font (size 1.27 1.27)))) (number "7"  (effects (font (size 1.27 1.27)))))
+        ;; General GPIO
+        (pin bidirectional (at  20.32  15.24 180) (length 5.08) (name "GPIO16/PIO_WS2812" (effects (font (size 1.27 1.27)))) (number "22" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at  20.32  12.7  180) (length 5.08) (name "GPIO17/PWR_EN"     (effects (font (size 1.27 1.27)))) (number "23b"(effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at  20.32  10.16 180) (length 5.08) (name "GPIO18/CAN_TX"     (effects (font (size 1.27 1.27)))) (number "24" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at  20.32  7.62  180) (length 5.08) (name "GPIO19/CAN_RX"     (effects (font (size 1.27 1.27)))) (number "25" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at  20.32  5.08  180) (length 5.08) (name "GPIO20/1W_ID"      (effects (font (size 1.27 1.27)))) (number "26" (effects (font (size 1.27 1.27)))))
+        ;; USB
+        (pin passive (at  20.32 -12.7  180) (length 5.08) (name "USB_DP" (effects (font (size 1.27 1.27)))) (number "43" (effects (font (size 1.27 1.27)))))
+        (pin passive (at  20.32 -15.24 180) (length 5.08) (name "USB_DM" (effects (font (size 1.27 1.27)))) (number "44" (effects (font (size 1.27 1.27)))))
+        ;; SWCLK/SWDIO for debug
+        (pin bidirectional (at  20.32 -2.54 180) (length 5.08) (name "SWCLK" (effects (font (size 1.27 1.27)))) (number "53" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional (at  20.32 -5.08 180) (length 5.08) (name "SWDIO" (effects (font (size 1.27 1.27)))) (number "54" (effects (font (size 1.27 1.27)))))
+        ;; RUN (reset)
+        (pin input (at  20.32  0 180) (length 5.08) (name "RUN" (effects (font (size 1.27 1.27)))) (number "56" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; PCA9685 — 16-channel PWM Servo Driver (TSSOP-28)
+    (symbol "PCA9685"
+      (pin_names (offset 1.016))
+      (property "Reference" "U" (at 0 15.24 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "PCA9685" (at 0 -15.24 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C9162" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "PCA9685_0_1"
+        (rectangle (start -12.7 -12.7) (end 12.7 12.7) (stroke (width 0.254) (type default)) (fill (type background)))
+        (pin power_in    (at -17.78  10.16 0)  (length 5.08) (name "VDD"   (effects (font (size 1.27 1.27)))) (number "1"  (effects (font (size 1.27 1.27)))))
+        (pin power_in    (at -17.78  7.62  0)  (length 5.08) (name "VCC"   (effects (font (size 1.27 1.27)))) (number "2"  (effects (font (size 1.27 1.27)))))
+        (pin power_in    (at   0    -17.78 90) (length 5.08) (name "GND"   (effects (font (size 1.27 1.27)))) (number "GND"(effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78  5.08  0)  (length 5.08) (name "SDA"   (effects (font (size 1.27 1.27)))) (number "24" (effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78  2.54  0)  (length 5.08) (name "SCL"   (effects (font (size 1.27 1.27)))) (number "25" (effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78  0     0)  (length 5.08) (name "~OE~"  (effects (font (size 1.27 1.27)))) (number "26" (effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78 -2.54  0)  (length 5.08) (name "A0"    (effects (font (size 1.27 1.27)))) (number "5"  (effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78 -5.08  0)  (length 5.08) (name "A1"    (effects (font (size 1.27 1.27)))) (number "6"  (effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78 -7.62  0)  (length 5.08) (name "A2"    (effects (font (size 1.27 1.27)))) (number "7"  (effects (font (size 1.27 1.27)))))
+        (pin input       (at -17.78 -10.16 0)  (length 5.08) (name "A3"    (effects (font (size 1.27 1.27)))) (number "8"  (effects (font (size 1.27 1.27)))))
+        ;; Output channels 0-7 (LED0_OUT to LED7_OUT)
+        (pin output      (at  17.78  10.16 180) (length 5.08) (name "LED0_OUT"  (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78  7.62  180) (length 5.08) (name "LED1_OUT"  (effects (font (size 1.27 1.27)))) (number "11" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78  5.08  180) (length 5.08) (name "LED2_OUT"  (effects (font (size 1.27 1.27)))) (number "12" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78  2.54  180) (length 5.08) (name "LED3_OUT"  (effects (font (size 1.27 1.27)))) (number "13" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78  0     180) (length 5.08) (name "LED4_OUT"  (effects (font (size 1.27 1.27)))) (number "14" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78 -2.54  180) (length 5.08) (name "LED5_OUT"  (effects (font (size 1.27 1.27)))) (number "15" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78 -5.08  180) (length 5.08) (name "LED6_OUT"  (effects (font (size 1.27 1.27)))) (number "16" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78 -7.62  180) (length 5.08) (name "LED7_OUT"  (effects (font (size 1.27 1.27)))) (number "17" (effects (font (size 1.27 1.27)))))
+        (pin output      (at  17.78 -10.16 180) (length 5.08) (name "LED8..15"  (effects (font (size 1.27 1.27)))) (number "18" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; Generic Resistor (reused)
+    (symbol "R"
+      (pin_numbers hide)
+      (property "Reference" "R" (at 1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value"     "R" (at -1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "R_0_1"
+        (rectangle (start -1.016 -2.54) (end 1.016 2.54) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive (at 0  3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -3.81  90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; Generic Capacitor (reused)
+    (symbol "C"
+      (pin_numbers hide)
+      (property "Reference" "C" (at 1.524 0 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "C" (at -1.524 0 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "C_0_1"
+        (polyline (pts (xy -2.032 -0.254) (xy 2.032 -0.254)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (polyline (pts (xy -2.032  0.254) (xy 2.032  0.254)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (pin passive (at 0  1.905 270) (length 1.651) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -1.905  90) (length 1.651) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION A — RP2040 MCU (U5)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "A — RP2040 MCU (U5)\nI2C addr base: 0x40 (PCA9685), OE pulled low via 10k"
+    (at 10 10 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "RP2040") (at 60 45 0) (unit 1)
+    (property "Reference" "U5" (at 82 22 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "RP2040"   (at 82 68 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_DFN_QFN:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C2040" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0003-0001-0000-000000000001")
+  )
+
+  ;; Flash memory W25Q16 (external QSPI — required by RP2040)
+  (text "U6: W25Q16JVSSIQ 2MB QSPI Flash\nLCSC: C131025\nSOIC-8, connect to GPIO[26..29] + CS + CLK"
+    (at 10 80 0) (effects (font (size 1.4 1.4)) (justify left)))
+
+  ;; RUN pullup (10k to 3V3)
+  (symbol (lib_id "R") (at 108 25 0) (unit 1)
+    (property "Reference" "R8"  (at 110 25 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10k" (at 110 22.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25744" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0003-0001-0000-000000000002")
+  )
+
+  ;; Decoupling caps for RP2040 power pins — 100nF per IOVDD/DVDD pin + 10µF bulk
+  (symbol (lib_id "C") (at 30 30 0) (unit 1)
+    (property "Reference" "C12" (at 32 30 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100nF" (at 32 28 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1525" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0003-0001-0000-000000000003")
+  )
+  (symbol (lib_id "C") (at 37 30 0) (unit 1)
+    (property "Reference" "C13" (at 39 30 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10uF" (at 39 28 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C19702" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0003-0001-0000-000000000004")
+  )
+
+  ;; Net labels
+  (global_label "SYS_3V3"    (shape input)  (at 30 60 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000010"))
+  (global_label "MCU_TX"     (shape output) (at 108 43 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000011"))
+  (global_label "MCU_RX"     (shape input)  (at 108 47 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000012"))
+  (global_label "I2C0_SDA"   (shape bidirectional) (at 30 50 180) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000013"))
+  (global_label "I2C0_SCL"   (shape bidirectional) (at 30 53 180) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000014"))
+  (global_label "PWM_SERVOS" (shape output) (at 108 60 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000015"))
+  (global_label "WS2812_DATA"(shape output) (at 108 63 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000016"))
+  (global_label "PWR_EN"     (shape output) (at 108 56 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000017"))
+  (global_label "CAN_TX"     (shape output) (at 108 68 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000018"))
+  (global_label "CAN_RX"     (shape input)  (at 108 71 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-000000000019"))
+  (global_label "ID_1W"      (shape bidirectional) (at 108 74 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0003-0001-0000-00000000001A"))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION B — PCA9685 Servo PWM Expander (U7)
+  ;;  I2C addr: A0=A1=A2=A3=0 → 0x40
+  ;;  OE tied low (always enabled); OE_N pin pulled to GND via 10k
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "B — PCA9685 PWM EXPANDER (U7)\nI2C 0x40, 16 channels — channels 0-5 = servos, 6+ reserved"
+    (at 10 100 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "PCA9685") (at 60 130 0) (unit 1)
+    (property "Reference" "U7" (at 75 112 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "PCA9685" (at 75 145 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C9162" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0003-0002-0000-000000000001")
+  )
+
+  ;; Decoupling
+  (symbol (lib_id "C") (at 37 118 0) (unit 1)
+    (property "Reference" "C14" (at 39 118 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100nF" (at 39 116 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1525" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0003-0002-0000-000000000002")
+  )
+
+  ;; Addr pins R9-R12 (A0-A3) pulled to GND → address 0x40
+  (text "R9-R12: 10k pull-down on A0,A1,A2,A3 → I2C addr 0x40\nInstall 0Ω DNP jumpers for address reconfiguration"
+    (at 10 150 0) (effects (font (size 1.2 1.2)) (justify left)))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION C — Jetson Orin Nano SO-DIMM (J2)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "C — JETSON ORIN NANO (J2, SO-DIMM 260-pin)\nTODO: Import symbol from Jetson_Nano KiCad lib or draw manually\nRef: https://developer.nvidia.com/embedded/downloads#?search=jetson%20orin%20nano%20carrier"
+    (at 10 165 0) (effects (font (size 1.6 1.6)) (justify left)))
+
+  (text "Key Jetson carrier board requirements:\n• 5V @ 5A minimum on pin groups (clean, low noise)\n• POWER_EN: assert after 5V stable (100ms delay suggested)\n• USB-C on J13 → Jetson USB for flashing (via USB_D+/D- passthrough)\n• CSI camera on J3 (22-pin FPC, 2-lane MIPI)\n• Ethernet: optional — use USB3 dongle if not routing RTL8153\n• Recovery button + Force Recovery GPIO required"
+    (at 10 173 0) (effects (font (size 1.2 1.2)) (justify left)))
+
+  (sheet_instances
+    (path "/a1b2c3d4-0001-0000-0000-000000000020/" (page "3"))
+  )
+)

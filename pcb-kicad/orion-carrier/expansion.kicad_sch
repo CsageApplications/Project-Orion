@@ -1,0 +1,212 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "a1b2c3d4-0005-0000-0000-000000000001")
+  (paper "A2")
+  (title_block
+    (title "Orion Carrier Board — ORION-EX Expansion Port")
+    (date "2026-05-17")
+    (rev "A")
+    (company "Project Orion / R!O1 Labs")
+    (comment 1 "Sheet 5/5 — ORION-EX module interface: SN65HVD230 CAN, DS2431 1-Wire ID, TPS22965 load switch")
+    (comment 2 "See hardware/specs/expansion-connector.md for full pinout and protocol spec")
+  )
+
+  (lib_symbols
+    (symbol "GND"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 -3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "GND" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "GND_0_1"
+        (polyline (pts (xy 0 0) (xy 0 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.762 -1.905) (xy 0.762 -1.905)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.254 -2.54) (xy 0.254 -2.54)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; SN65HVD230 — 3.3V CAN Transceiver (SOIC-8)
+    ;; Pins: TXD(1) GND(2) VCC(3) RXD(4) ~RE~(5? - not on HVD230) D(6) CANH(7) CANL(8)
+    ;; SN65HVD230 has: D(1) GND(2) VCC(3) R(4) ~ (8-pin: D,GND,VCC,R,Vref,CANH,CANL,RS)
+    (symbol "SN65HVD230"
+      (pin_names (offset 1.016))
+      (property "Reference" "U" (at 0 8.89 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "SN65HVD230" (at 0 -8.89 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn65hvd230.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C131432" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "SN65HVD230_0_1"
+        (rectangle (start -7.62 -6.35) (end 7.62 6.35) (stroke (width 0.254) (type default)) (fill (type background)))
+        (pin input    (at -12.7  3.81 0)   (length 5.08) (name "D"    (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin power_in (at -12.7  1.27 0)   (length 5.08) (name "GND"  (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin power_in (at -12.7 -1.27 0)   (length 5.08) (name "VCC"  (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin output   (at -12.7 -3.81 0)   (length 5.08) (name "R"    (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+        (pin no_connect (at 12.7  3.81 180) (length 5.08) (name "Vref" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27)))))
+        (pin passive  (at  12.7  1.27 180)  (length 5.08) (name "CANH" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27)))))
+        (pin passive  (at  12.7 -1.27 180)  (length 5.08) (name "CANL" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27)))))
+        (pin input    (at  12.7 -3.81 180)  (length 5.08) (name "RS"   (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; Generic Resistor
+    (symbol "R"
+      (pin_numbers hide)
+      (property "Reference" "R" (at 1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value"     "R" (at -1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "R_0_1"
+        (rectangle (start -1.016 -2.54) (end 1.016 2.54) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive (at 0  3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -3.81  90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; Generic Capacitor
+    (symbol "C"
+      (pin_numbers hide)
+      (property "Reference" "C" (at 1.524 0 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "C" (at -1.524 0 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "C_0_1"
+        (polyline (pts (xy -2.032 -0.254) (xy 2.032 -0.254)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (polyline (pts (xy -2.032  0.254) (xy 2.032  0.254)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (pin passive (at 0  1.905 270) (length 1.651) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -1.905  90) (length 1.651) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; 12-pin Molex Mini-Fit Jr. receptacle (J11)
+    (symbol "Conn_02x06"
+      (pin_names (offset 1.016))
+      (property "Reference" "J" (at 0 10.16 0) (effects (font (size 1.27 1.27))))
+      (property "Value"     "Conn_02x06" (at 0 -10.16 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Connector_Molex:Molex_MiniFit-Jr_5566-12A_2x06_P4.20mm_Vertical" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "https://www.molex.com/en-us/products/part-detail/39301120" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "LCSC" "C277512" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Conn_02x06_0_1"
+        (rectangle (start -1.27 -7.62) (end 3.81 7.62) (stroke (width 0.254) (type default)) (fill (type pin)))
+        (pin passive (at -5.08  6.35 0)  (length 3.81) (name "PWR_12V_A" (effects (font (size 1.27 1.27)))) (number "1"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08  3.81 0)  (length 3.81) (name "PWR_12V_B" (effects (font (size 1.27 1.27)))) (number "2"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08  1.27 0)  (length 3.81) (name "GND_A"     (effects (font (size 1.27 1.27)))) (number "3"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08 -1.27 0)  (length 3.81) (name "GND_B"     (effects (font (size 1.27 1.27)))) (number "4"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08 -3.81 0)  (length 3.81) (name "CAN_H"     (effects (font (size 1.27 1.27)))) (number "5"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08 -6.35 0)  (length 3.81) (name "CAN_L"     (effects (font (size 1.27 1.27)))) (number "6"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at  8.89  6.35 180) (length 3.81) (name "ID_1W"     (effects (font (size 1.27 1.27)))) (number "7"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at  8.89  3.81 180) (length 3.81) (name "PWR_EN"    (effects (font (size 1.27 1.27)))) (number "8"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at  8.89  1.27 180) (length 3.81) (name "USB_D+"    (effects (font (size 1.27 1.27)))) (number "9"  (effects (font (size 1.27 1.27)))))
+        (pin passive (at  8.89 -1.27 180) (length 3.81) (name "USB_D-"    (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27)))))
+        (pin passive (at  8.89 -3.81 180) (length 3.81) (name "UART_TX"   (effects (font (size 1.27 1.27)))) (number "11" (effects (font (size 1.27 1.27)))))
+        (pin passive (at  8.89 -6.35 180) (length 3.81) (name "UART_RX"   (effects (font (size 1.27 1.27)))) (number "12" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION A — J11 ORION-EX Connector (Molex Mini-Fit Jr. 12-pin, receptacle)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "A — J11 ORION-EX CONNECTOR\n12-pin Molex Mini-Fit Jr. receptacle (head-side)\nMOLEX 39301120 / LCSC C277512"
+    (at 10 10 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "Conn_02x06") (at 40 35 0) (unit 1)
+    (property "Reference" "J11" (at 48 22 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "ORION-EX" (at 48 48 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_Molex:Molex_MiniFit-Jr_5566-12A_2x06_P4.20mm_Vertical" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C277512" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0005-0001-0000-000000000001")
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION B — SN65HVD230 CAN Transceiver (U8)
+  ;;  CAN_TX/CAN_RX wired to RP2040 GPIO18/GPIO19
+  ;;  RS pin tied to GND → high-speed mode
+  ;;  120Ω termination resistor R16 on CANH-CANL (host-side termination)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "B — CAN BUS TRANSCEIVER (SN65HVD230, U8)\nHost-side 120Ω termination R16 on CANH-CANL\nRS → GND (high-speed mode). Vref NC."
+    (at 10 60 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "SN65HVD230") (at 70 80 0) (unit 1)
+    (property "Reference" "U8" (at 80 70 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "SN65HVD230" (at 80 90 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C131432" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0005-0002-0000-000000000001")
+  )
+
+  ;; CAN bus termination R16 = 120Ω (0402)
+  (symbol (lib_id "R") (at 100 73.81 90) (unit 1)
+    (property "Reference" "R16" (at 102 73.81 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "120" (at 102 71.27 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25190" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0005-0002-0000-000000000002")
+  )
+
+  ;; Bypass cap C15 on VCC
+  (symbol (lib_id "C") (at 55 73.81 0) (unit 1)
+    (property "Reference" "C15" (at 57 73.81 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100nF" (at 57 71.27 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C1525" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0005-0002-0000-000000000003")
+  )
+
+  ;; CAN bus TVS protection D2 (PRTR5V0U2X on CANH/CANL)
+  (text "D2: PRTR5V0U2X TVS on CANH+CANL\nLCSC: C12333 — dual rail-to-rail ESD\nPlace as close to J11 pins 5-6 as possible"
+    (at 110 75 0) (effects (font (size 1.2 1.2)) (justify left)))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION C — 1-Wire Module ID Bus
+  ;;  GPIO20 → 4.7kΩ pull-up R17 → ID_1W line → J11 pin 7
+  ;;  DS2431 on module side holds capability record (see expansion-connector.md)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "C — 1-WIRE MODULE ID BUS\nRP2040 GPIO20 → 4.7kΩ pull-up R17 → J11 pin 7 (ID_1W)\nModule installs DS2431 EEPROM on this line (LCSC C351875)"
+    (at 10 110 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "R") (at 50 123 90) (unit 1)
+    (property "Reference" "R17" (at 52 123 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "4.7k" (at 52 120.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25900" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0005-0003-0000-000000000001")
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION D — PWR_EN GPIO drive to J11 pin 8
+  ;;  RP2040 GPIO17 → 1kΩ series R18 → J11 pin 8
+  ;;  (series R protects GPIO from module capacitance during inrush)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "D — PWR_EN DRIVE\nRP2040 GPIO17 → R18 (1kΩ) → J11 pin 8 (PWR_EN)\nAlso drives TPS22965 ON pin (see power sheet U4)"
+    (at 10 140 0) (effects (font (size 2.0 2.0) bold) (justify left)))
+
+  (symbol (lib_id "R") (at 50 153 0) (unit 1)
+    (property "Reference" "R18" (at 52 153 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "1k" (at 52 150.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C21190" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0005-0004-0000-000000000001")
+  )
+
+  ;; Net imports
+  (global_label "EXP_12V"  (shape input)        (at 10 170 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000001"))
+  (global_label "SYS_3V3"  (shape input)        (at 10 175 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000002"))
+  (global_label "PWR_EN"   (shape input)        (at 10 180 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000003"))
+  (global_label "CAN_TX"   (shape input)        (at 10 185 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000004"))
+  (global_label "CAN_RX"   (shape output)       (at 10 190 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000005"))
+  (global_label "ID_1W"    (shape bidirectional)(at 10 195 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000006"))
+  (global_label "UART_TX"  (shape input)        (at 10 200 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000007"))
+  (global_label "UART_RX"  (shape output)       (at 10 205 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0005-0000-0000-000000000008"))
+
+  (sheet_instances
+    (path "/a1b2c3d4-0001-0000-0000-000000000040/" (page "5"))
+  )
+)

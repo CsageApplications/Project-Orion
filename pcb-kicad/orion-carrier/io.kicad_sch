@@ -1,0 +1,203 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "a1b2c3d4-0004-0000-0000-000000000001")
+  (paper "A2")
+  (title_block
+    (title "Orion Carrier Board — I/O & Connectors")
+    (date "2026-05-17")
+    (rev "A")
+    (company "Project Orion / R!O1 Labs")
+    (comment 1 "Sheet 4/5 — All external connectors: servos, OLED, mic, speaker, LEDs, camera, debug")
+    (comment 2 "Servo power from SERVO_6V. Signal logic from SYS_3V3.")
+  )
+
+  (lib_symbols
+    (symbol "GND"
+      (power) (pin_names (offset 0)) (pin_numbers hide)
+      (property "Reference" "#PWR" (at 0 -3.81 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Value" "GND" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "GND_0_1"
+        (polyline (pts (xy 0 0) (xy 0 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.762 -1.905) (xy 0.762 -1.905)) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -0.254 -2.54) (xy 0.254 -2.54)) (stroke (width 0) (type default)) (fill (type none)))
+        (pin power_in (at 0 0 0) (length 0) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; 3-pin JST-SH servo connector (generic)
+    (symbol "Conn_01x03"
+      (pin_names (offset 1.016))
+      (property "Reference" "J" (at -3.81 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value"     "Conn_01x03" (at 3.81 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Conn_01x03_0_1"
+        (rectangle (start -1.27 -3.81) (end 0 3.81) (stroke (width 0.254) (type default)) (fill (type pin)))
+        (pin passive (at -5.08  2.54 0) (length 3.81) (name "GND"  (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08  0    0) (length 3.81) (name "PWR"  (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08 -2.54 0) (length 3.81) (name "SIG"  (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; 4-pin I2C header (OLED eyes)
+    (symbol "Conn_01x04"
+      (pin_names (offset 1.016))
+      (property "Reference" "J" (at -3.81 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value"     "Conn_01x04" (at 3.81 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Conn_01x04_0_1"
+        (rectangle (start -1.27 -5.08) (end 0 5.08) (stroke (width 0.254) (type default)) (fill (type pin)))
+        (pin passive (at -5.08  3.81 0) (length 3.81) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08  1.27 0) (length 3.81) (name "VCC" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08 -1.27 0) (length 3.81) (name "SCL" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin passive (at -5.08 -3.81 0) (length 3.81) (name "SDA" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+      )
+    )
+
+    ;; Generic resistor (for pull-ups)
+    (symbol "R"
+      (pin_numbers hide)
+      (property "Reference" "R" (at 1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value"     "R" (at -1.524 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "R_0_1"
+        (rectangle (start -1.016 -2.54) (end 1.016 2.54) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive (at 0  3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive (at 0 -3.81  90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION A — Servo Connectors J6-J8  (JST-SH 3-pin)
+  ;;  Pin 1=GND, Pin 2=SERVO_6V, Pin 3=PWM signal (from PCA9685)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "A — SERVO CONNECTORS (J6 Pan, J7 Tilt, J8 Aux 1-4)\nPower: SERVO_6V.  Signal: 3.3V PWM from PCA9685 (3.3V logic OK for standard servos)"
+    (at 10 10 0) (effects (font (size 1.8 1.8) bold) (justify left)))
+
+  (symbol (lib_id "Conn_01x03") (at 30 25 0) (unit 1)
+    (property "Reference" "J6" (at 22 25 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "SERVO_PAN" (at 22 22.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0001-0000-000000000001")
+  )
+  (symbol (lib_id "Conn_01x03") (at 30 35 0) (unit 1)
+    (property "Reference" "J7" (at 22 35 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "SERVO_TILT" (at 22 32.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0001-0000-000000000002")
+  )
+  (symbol (lib_id "Conn_01x03") (at 30 45 0) (unit 1)
+    (property "Reference" "J8A" (at 22 45 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "SERVO_AUX1" (at 22 42.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0001-0000-000000000003")
+  )
+  (symbol (lib_id "Conn_01x03") (at 30 55 0) (unit 1)
+    (property "Reference" "J8B" (at 22 55 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "SERVO_AUX2" (at 22 52.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0001-0000-000000000004")
+  )
+
+  ;; I2C pull-ups on SCL/SDA (4.7k to 3V3) — only one set needed for entire bus
+  (symbol (lib_id "R") (at 65 15 90) (unit 1)
+    (property "Reference" "R13" (at 67 15 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "4.7k" (at 67 12.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25900" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0001-0000-000000000010")
+  )
+  (symbol (lib_id "R") (at 70 15 90) (unit 1)
+    (property "Reference" "R14" (at 72 15 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "4.7k" (at 72 12.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25900" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0001-0000-000000000011")
+  )
+  (text "R13: I2C0_SDA pull-up 4.7k → 3V3\nR14: I2C0_SCL pull-up 4.7k → 3V3"
+    (at 75 15 0) (effects (font (size 1.1 1.1)) (justify left)))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION B — OLED Eye Displays (J9)  I2C
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "B — OLED EYE DISPLAYS (J9)\n2× SSD1306 (0.96\" 128×64) on I2C0\nAddr: 0x3C (left eye), 0x3D (right eye) — tie SA0 pin accordingly"
+    (at 10 70 0) (effects (font (size 1.8 1.8) bold) (justify left)))
+
+  (symbol (lib_id "Conn_01x04") (at 30 88 0) (unit 1)
+    (property "Reference" "J9" (at 22 88 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "OLED_EYES" (at 22 85.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0002-0000-000000000001")
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION C — WS2812B LED Strip (J10)
+  ;;  3-pin: GND, 5V, DATA (from RP2040 GPIO16 via PIO)
+  ;;  — 300Ω series R on DATA for overshoot damping (R15)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "C — WS2812B AMBIENT LEDs (J10)\nRP2040 PIO drives DATA at 3.3V — 300Ω series damping resistor R15\nPower from SYS_5V (WS2812B accepts 3.7-5.3V)"
+    (at 10 105 0) (effects (font (size 1.8 1.8) bold) (justify left)))
+
+  (symbol (lib_id "Conn_01x03") (at 30 120 0) (unit 1)
+    (property "Reference" "J10" (at 22 120 0) (effects (font (size 1.27 1.27))))
+    (property "Value"     "WS2812_LED" (at 22 117.46 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0003-0000-000000000001")
+  )
+  (symbol (lib_id "R") (at 52 117.46 0) (unit 1)
+    (property "Reference" "R15" (at 54 117.46 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "300" (at 54 115 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (property "LCSC" "C25196" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+    (uuid "a1b2c3d4-0004-0003-0000-000000000002")
+  )
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION D — Mic Array (J4) & Speaker (J5)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "D — MIC ARRAY (J4) & SPEAKER (J5)\nJ4: 2×5 pin header → ReSpeaker 2-mic hat or custom I2S MEMS array\nJ5: JST-PH 2-pin → MAX98357A Class-D amp output\n    MAX98357A: I2S input, filterless, 3.2W @ 4Ω, LCSC C2687702"
+    (at 10 135 0) (effects (font (size 1.8 1.8) bold) (justify left)))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION E — Debug (J12 Tag-Connect TC2030)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "E — DEBUG UART / SWD (J12)\nTag-Connect TC2030-IDC-NL (no legs, compact)\nPins: 1=VCC, 2=SWDIO, 3=SWCLK, 4=GND, 5=MCU_TX, 6=MCU_RX\nLCSC footprint: use TC2030-IDC-NL 2x3 0.05\" pitch"
+    (at 10 160 0) (effects (font (size 1.6 1.6)) (justify left)))
+
+  ;; ══════════════════════════════════════════════════════════════════════════════
+  ;;  SECTION F — USB-C (J13) for Jetson flashing
+  ;;  USB_D+/D- passthrough from Jetson SO-DIMM USB0 pins
+  ;;  Add 5.1k CC1/CC2 resistors to GND (USB-C DFP/UFP detection)
+  ;; ══════════════════════════════════════════════════════════════════════════════
+
+  (text "F — USB-C FLASHING PORT (J13)\nPassthrough Jetson USB0 D+/D- → USB-C receptacle\nCC1/CC2 → 5.1kΩ to GND (UFP/device-side detection)\nConnector: TYPE-C-31-M-12 LCSC C165948 (6-pin simplified)"
+    (at 10 180 0) (effects (font (size 1.6 1.6)) (justify left)))
+
+  ;; Global net imports
+  (global_label "SYS_5V"      (shape input) (at 120 25 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000001"))
+  (global_label "SYS_3V3"     (shape input) (at 120 30 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000002"))
+  (global_label "SERVO_6V"    (shape input) (at 120 35 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000003"))
+  (global_label "MCU_TX"      (shape input) (at 120 40 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000004"))
+  (global_label "MCU_RX"      (shape output)(at 120 45 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000005"))
+  (global_label "I2C0_SDA"    (shape bidirectional) (at 120 50 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000006"))
+  (global_label "I2C0_SCL"    (shape bidirectional) (at 120 55 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000007"))
+  (global_label "PWM_SERVOS"  (shape input) (at 120 60 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000008"))
+  (global_label "WS2812_DATA" (shape input) (at 120 65 0) (length 2.54) (effects (font (size 1.27 1.27))) (uuid "a1b2c3d4-0004-0000-0000-000000000009"))
+
+  (sheet_instances
+    (path "/a1b2c3d4-0001-0000-0000-000000000030/" (page "4"))
+  )
+)
