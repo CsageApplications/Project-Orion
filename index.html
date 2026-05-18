@@ -81,6 +81,23 @@
       font-weight: 800;
       letter-spacing: -0.02em;
     }
+    .nav-by {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.02em;
+      padding-left: 10px;
+      border-left: 1px solid rgba(255,255,255,0.1);
+      margin-left: 2px;
+      line-height: 1.3;
+    }
+    .nav-by a {
+      color: var(--cyan);
+      opacity: 0.8;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .nav-by a:hover { opacity: 1; }
     .nav-logo-mark {
       width: 30px; height: 30px;
       border: 1px solid var(--cyan-border);
@@ -476,12 +493,14 @@
     </div>
     Orion Robotics
   </div>
+  <div class="nav-by">A <a href="https://csageapplications.github.io/RIVAL-pages/" target="_blank" rel="noopener">R!O1 Labs</a> project</div>
   <ul class="nav-links">
     <li><a href="#vision">Vision</a></li>
     <li><a href="#platform">Platform</a></li>
     <li><a href="#modules">Modules</a></li>
     <li><a href="#architecture">Architecture</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="https://csageapplications.github.io/RIVAL-pages/" target="_blank" rel="noopener" style="color:var(--cyan);opacity:0.8;">R!O1 Labs ↗</a></li>
   </ul>
   <div class="nav-badge">PERSONAL PROJECT · OPEN SOURCE</div>
 </nav>
@@ -916,7 +935,10 @@
       </div>
       Orion Robotics
     </div>
-    <p>Personal project · <a href="https://github.com/CsageApplications/Project-Orion" style="color:var(--cyan);opacity:0.7;">View on GitHub</a></p>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.35rem;">
+      <p>A <a href="https://csageapplications.github.io/RIVAL-pages/" target="_blank" rel="noopener" style="color:var(--cyan);opacity:0.85;font-weight:600;">R!O1 Labs</a> project</p>
+      <p>Personal project · <a href="https://github.com/CsageApplications/Project-Orion" style="color:var(--cyan);opacity:0.7;">View on GitHub</a></p>
+    </div>
   </div>
 </footer>
 
