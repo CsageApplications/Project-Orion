@@ -2,28 +2,58 @@ import { useOrionStore } from '../store'
 
 type Status = 'ok' | 'warn' | 'err'
 
+const statusColor: Record<Status, string> = {
+  ok:   'var(--cyan)',
+  warn: 'var(--amber)',
+  err:  'var(--red)',
+}
 const dotClass: Record<Status, string> = {
-  ok: 'status-dot',
+  ok:   'status-dot',
   warn: 'status-dot amber',
-  err: 'status-dot red',
+  err:  'status-dot red',
 }
 
-const valColor: Record<Status, string> = {
-  ok: 'text-[#00d4ff]',
-  warn: 'text-[#f59e0b]',
-  err: 'text-[#ff3b3b]',
-}
-
-function Row({ label, value, unit, status }: { label: string; value: string; unit?: string; status: Status }) {
+function MetricBar({ value, max = 100, status }: { value: number | null; max?: number; status: Status }) {
+  const pct = value !== null ? Math.min(100, (value / max) * 100) : 0
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <div className={dotClass[status]} />
-        <span className="text-xs tracking-widest uppercase text-[#4a7a90]">{label}</span>
+    <div style={{ height: 2, background: 'rgba(0,212,255,0.08)', borderRadius: 1, overflow: 'hidden', marginTop: 2 }}>
+      <div style={{
+        height: '100%',
+        width: `${pct}%`,
+        background: value !== null
+          ? `linear-gradient(90deg, ${statusColor[status]}, ${statusColor[status]}aa)`
+          : 'transparent',
+        transition: 'width 0.6s ease',
+        boxShadow: value !== null ? `0 0 4px ${statusColor[status]}88` : 'none',
+      }} />
+    </div>
+  )
+}
+
+function Row({
+  label, value, unit, status, showBar = false, barValue = null,
+}: {
+  label: string; value: string; unit?: string; status: Status
+  showBar?: boolean; barValue?: number | null
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className={dotClass[status]} style={{ width: 4, height: 4 }} />
+          <span style={{
+            fontFamily: 'var(--mono)', fontSize: '0.58rem', letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: 'var(--text-dim)',
+          }}>{label}</span>
+        </div>
+        <span style={{
+          fontFamily: 'var(--mono)', fontSize: '0.62rem', fontWeight: 600,
+          letterSpacing: '0.08em', color: statusColor[status],
+        }}>
+          {value}{unit && <span style={{ opacity: 0.5, marginLeft: 2 }}>{unit}</span>}
+        </span>
       </div>
-      <span className={`text-xs font-bold tracking-wider font-mono ${valColor[status]}`}>
-        {value}{unit && <span className="opacity-50 ml-0.5">{unit}</span>}
-      </span>
+      {showBar && <MetricBar value={barValue} status={status} />}
     </div>
   )
 }
@@ -36,30 +66,43 @@ export default function StatusPanel() {
   const battery = robot?.battery_level ?? null
 
   return (
-    <div className="hud-panel h-full p-4 flex flex-col gap-3">
-      <span className="hud-label">System Status</span>
-      <div className="flex flex-col gap-2 flex-1">
-        <Row label="System" value="ONLINE" status="ok" />
-        <Row
-          label="Battery"
-          value={battery !== null ? String(battery) : '—'}
-          unit="%"
+    <div className="hud-panel h-full" style={{ padding: '14px 14px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {/* Header */}
+      <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid rgba(0,212,255,0.08)' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <span style={{ fontFamily:'var(--mono)', fontSize:'0.55rem', letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--text-dim)' }}>System Status</span>
+          <span style={{
+            fontFamily:'var(--mono)', fontSize:'0.5rem', letterSpacing:'0.12em',
+            padding: '2px 8px',
+            border: '1px solid rgba(0,212,255,0.2)',
+            borderRadius: '2px',
+            background: 'rgba(0,212,255,0.06)',
+            color: 'var(--cyan)',
+          }}>NOMINAL</span>
+        </div>
+      </div>
+
+      {/* Metrics */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+        <Row label="Connection" value={backendOnline ? 'ONLINE' : 'OFFLINE'}
+          status={backendOnline ? 'ok' : 'err'} />
+        <Row label="Robot" value={robotState}
+          status={robotState === 'ERROR' ? 'err' : robotState === 'IDLE' || robotState === 'STANDBY' ? 'warn' : 'ok'} />
+        <Row label="Battery" value={battery !== null ? String(battery) : '—'} unit="%"
           status={battery === null ? 'warn' : battery > 20 ? 'ok' : 'err'}
-        />
-        <Row label="CPU" value="—" status="warn" />
-        <Row label="Memory" value="—" status="warn" />
-        <Row
-          label="Backend"
-          value={backendOnline ? 'ONLINE' : 'OFFLINE'}
-          status={backendOnline ? 'ok' : 'err'}
-        />
-        <Row
-          label="Robot"
-          value={robotState}
-          status={robotState === 'IDLE' || robotState === 'STANDBY' ? 'warn' : robotState === 'ERROR' ? 'err' : 'ok'}
-        />
-        <Row label="Camera" value="NO FEED" status="warn" />
+          showBar barValue={battery} />
+        <Row label="CPU" value="—" status="warn" showBar barValue={null} />
+        <Row label="Memory" value="—" status="warn" showBar barValue={null} />
         <Row label="LLM" value="READY" status="ok" />
+        <Row label="Camera" value="NO FEED" status="warn" />
+        <Row label="Audio" value="ACTIVE" status="ok" />
+      </div>
+
+      {/* Footer */}
+      <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(0,212,255,0.06)' }}>
+        <span style={{ fontFamily:'var(--mono)', fontSize:'0.5rem', letterSpacing:'0.12em', color:'var(--text-dim)' }}>
+          SYS · ORION-01 · v0.1.0
+        </span>
       </div>
     </div>
   )
