@@ -1,48 +1,66 @@
-import { useRef } from 'react'
+import { useRef, createContext, useContext } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Torus, Text } from '@react-three/drei'
 import * as THREE from 'three'
+import { useOrionStore } from '../store'
 
 const CYAN   = '#00d4ff'
 const AMBER  = '#f59e0b'
 const VIOLET = '#7c3aed'
+const RED    = '#ef4444'
+
+/** Derived accent color based on robot state */
+function useAccent(): string {
+  const robot = useOrionStore((s) => s.robotStatus)
+  const state = robot?.state?.toUpperCase() ?? 'STANDBY'
+  if (state === 'ERROR')  return RED
+  if (state === 'ACTIVE') return CYAN
+  return CYAN
+}
+
+const AccentCtx = createContext(CYAN)
 
 function OuterRing() {
   const ref = useRef<THREE.Mesh>(null)
+  const color = useContext(AccentCtx)
   useFrame((_, delta) => { if (ref.current) ref.current.rotation.z += delta * 0.2 })
   return (
     <Torus ref={ref} args={[2.45, 0.008, 16, 120]}>
-      <meshBasicMaterial color={CYAN} transparent opacity={0.25} />
+      <meshBasicMaterial color={color} transparent opacity={0.25} />
     </Torus>
   )
 }
 
 function OuterDashed() {
   const ref = useRef<THREE.Mesh>(null)
+  const color = useContext(AccentCtx)
   useFrame((_, delta) => { if (ref.current) ref.current.rotation.z -= delta * 0.08 })
   return (
     <Torus ref={ref} args={[2.62, 0.004, 16, 60]}>
-      <meshBasicMaterial color={CYAN} transparent opacity={0.12} />
+      <meshBasicMaterial color={color} transparent opacity={0.12} />
     </Torus>
   )
 }
 
 function MiddleRing() {
   const ref = useRef<THREE.Mesh>(null)
+  const accent = useContext(AccentCtx)
+  const color = accent === RED ? RED : AMBER
   useFrame((_, delta) => { if (ref.current) ref.current.rotation.z -= delta * 0.38 })
   return (
     <Torus ref={ref} args={[1.72, 0.007, 16, 120]}>
-      <meshBasicMaterial color={AMBER} transparent opacity={0.35} />
+      <meshBasicMaterial color={color} transparent opacity={0.35} />
     </Torus>
   )
 }
 
 function InnerRing() {
   const ref = useRef<THREE.Mesh>(null)
+  const color = useContext(AccentCtx)
   useFrame((_, delta) => { if (ref.current) ref.current.rotation.z += delta * 0.65 })
   return (
     <Torus ref={ref} args={[1.1, 0.006, 16, 120]}>
-      <meshBasicMaterial color={CYAN} transparent opacity={0.4} />
+      <meshBasicMaterial color={color} transparent opacity={0.4} />
     </Torus>
   )
 }
@@ -77,6 +95,7 @@ function PulseDisk() {
 
 function GlowCore() {
   const ref = useRef<THREE.Mesh>(null)
+  const color = useContext(AccentCtx)
   useFrame(({ clock }) => {
     if (ref.current) {
       const t = clock.getElapsedTime()
@@ -86,16 +105,17 @@ function GlowCore() {
   return (
     <mesh ref={ref}>
       <circleGeometry args={[2.0, 64]} />
-      <meshBasicMaterial color={CYAN} transparent opacity={0.06} />
+      <meshBasicMaterial color={color} transparent opacity={0.06} />
     </mesh>
   )
 }
 
 function OrionLabel() {
+  const color = useContext(AccentCtx)
   return (
     <Text
       fontSize={0.28}
-      color={CYAN}
+      color={color}
       anchorX="center"
       anchorY="middle"
       letterSpacing={0.28}
@@ -149,20 +169,23 @@ function TickMarks() {
 }
 
 export default function HudRings() {
+  const accent = useAccent()
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <Canvas camera={{ position: [0, 0, 6.2], fov: 52 }} dpr={[1, 2]}>
-        <GlowCore />
-        <OuterDashed />
-        <TickMarks />
-        <OuterRing />
-        <VioletRing />
-        <MiddleRing />
-        <InnerRing />
-        <PulseDisk />
-        <OrionLabel />
-        <SubLabel />
-      </Canvas>
-    </div>
+    <AccentCtx.Provider value={accent}>
+      <div style={{ width: '100%', height: '100%' }}>
+        <Canvas camera={{ position: [0, 0, 6.2], fov: 52 }} dpr={[1, 2]}>
+          <GlowCore />
+          <OuterDashed />
+          <TickMarks />
+          <OuterRing />
+          <VioletRing />
+          <MiddleRing />
+          <InnerRing />
+          <PulseDisk />
+          <OrionLabel />
+          <SubLabel />
+        </Canvas>
+      </div>
+    </AccentCtx.Provider>
   )
 }
