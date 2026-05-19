@@ -32,6 +32,8 @@ pub struct AppState {
     pub llm: Arc<LlmClient>,
     pub tts: Arc<TtsClient>,
     pub stt: Arc<SttClient>,
+    pub command_log: Arc<RwLock<Vec<api::CommandRecord>>>,
+    pub chat_history: Arc<RwLock<Vec<api::ChatHistoryEntry>>>,
 }
 
 #[tokio::main]
@@ -64,6 +66,8 @@ async fn main() -> anyhow::Result<()> {
         llm: Arc::new(LlmClient::new(&config)),
         tts: Arc::new(TtsClient::new(&config)),
         stt: Arc::new(SttClient::new(&config)),
+        command_log: Arc::new(RwLock::new(Vec::new())),
+        chat_history: Arc::new(RwLock::new(Vec::new())),
     };
 
     // CORS
@@ -83,10 +87,13 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/robot/command", post(api::send_command))
         // Chat
         .route("/api/chat", post(api::chat))
+        .route("/api/chat/history", get(api::get_chat_history))
         // TTS
         .route("/api/tts", post(api::tts))
         // STT
         .route("/api/stt", post(api::stt))
+        // Command history
+        .route("/api/robot/commands", get(api::get_commands))
         // WebSocket
         .route("/ws", get(ws::ws_handler))
         .with_state(state.clone())

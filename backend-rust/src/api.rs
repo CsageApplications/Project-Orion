@@ -6,6 +6,36 @@ use uuid::Uuid;
 
 use crate::{error::AppResult, AppState};
 
+// ─── Command history ───────────────────────────────────────────────────────────
+
+#[derive(Serialize, Clone)]
+pub struct CommandRecord {
+    pub id: String,
+    pub command: String,
+    pub state_after: String,
+    pub timestamp: String,
+}
+
+pub async fn get_commands(State(state): State<AppState>) -> Json<Vec<CommandRecord>> {
+    let log = state.command_log.read().await;
+    Json(log.clone())
+}
+
+// ─── Chat history ──────────────────────────────────────────────────────────────
+
+#[derive(Serialize, Clone)]
+pub struct ChatHistoryEntry {
+    pub id: String,
+    pub role: String,
+    pub message: String,
+    pub timestamp: String,
+}
+
+pub async fn get_chat_history(State(state): State<AppState>) -> Json<Vec<ChatHistoryEntry>> {
+    let history = state.chat_history.read().await;
+    Json(history.clone())
+}
+
 // ─── Health ───────────────────────────────────────────────────────────────────
 
 #[derive(Serialize)]
@@ -105,6 +135,23 @@ pub async fn send_command(
         "data": status,
     })).unwrap_or_default());
 
+    // Persist command record
+    {
+        let state_after = state.robot_state.read().await.state.clone();
+        let mut log = state.command_log.write().await;
+        log.push(CommandRecord {
+            id: Uuid::new_v4().to_string(),
+            command: command.clone(),
+            state_after,
+            timestamp: Utc::now().to_rfc3339(),
+        });
+        // Keep last 200
+        if log.len() > 200 {
+            let excess = log.len() - 200;
+            log.drain(0..excess);
+        }
+    }
+
     Ok(Json(CommandResponse {
         id: Uuid::new_v4().to_string(),
         command,
@@ -145,6 +192,28 @@ pub async fn chat(
         .complete(&req.message)
         .await
         .map_err(|e| crate::error::AppError::Llm(e.to_string()))?;
+
+    // Persist user + assistant messages
+    {
+        let mut history = state.chat_history.write().await;
+        history.push(ChatHistoryEntry {
+            id: Uuid::new_v4().to_string(),
+            role: "user".to_string(),
+            message: req.message.clone(),
+            timestamp: Utc::now().to_rfc3339(),
+        });
+        history.push(ChatHistoryEntry {
+            id: Uuid::new_v4().to_string(),
+            role: "assistant".to_string(),
+            message: reply.clone(),
+            timestamp: Utc::now().to_rfc3339(),
+        });
+        // keep last 200 messages
+        if history.len() > 200 {
+            let excess = history.len() - 200;
+            history.drain(0..excess);
+        }
+    }
 
     Ok(Json(ChatResponse {
         id: Uuid::new_v4().to_string(),
