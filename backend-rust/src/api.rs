@@ -62,7 +62,10 @@ pub async fn send_command(
 ) -> AppResult<Json<CommandResponse>> {
     let command = req.command.to_uppercase();
 
-    let allowed = ["PATROL", "DOCK", "FOLLOW", "STOP", "SLEEP", "WAKE"];
+    let allowed = [
+        "PATROL", "DOCK", "FOLLOW", "STOP", "SLEEP", "WAKE",
+        "TASK_START", "TASK_STOP", "RESET", "ERROR",
+    ];
     if !allowed.contains(&command.as_str()) {
         return Err(crate::error::AppError::BadRequest(
             format!("Unknown command: {command}"),
@@ -71,20 +74,34 @@ pub async fn send_command(
 
     tracing::info!(command = %command, "Robot command received");
 
-    // Update robot state
+    // Update robot state machine
     {
         let mut robot = state.robot_state.write().await;
-        robot.task = Some(command.clone());
-        robot.state = match command.as_str() {
-            "STOP" | "DOCK" | "SLEEP" => "IDLE".to_string(),
-            _ => "ACTIVE".to_string(),
-        };
+        match command.as_str() {
+            "RESET" => {
+                robot.state = "STANDBY".to_string();
+                robot.task = None;
+            }
+            "ERROR" => {
+                robot.state = "ERROR".to_string();
+                robot.task = Some("FAULT".to_string());
+            }
+            "STOP" | "DOCK" | "SLEEP" | "TASK_STOP" => {
+                robot.state = "IDLE".to_string();
+                robot.task = Some(command.clone());
+            }
+            _ => {
+                robot.state = "ACTIVE".to_string();
+                robot.task = Some(command.clone());
+            }
+        }
+        robot.timestamp = Utc::now().to_rfc3339();
     }
 
     // Broadcast updated state to WebSocket clients
     let status = state.robot_state.read().await.clone();
     let _ = state.ws_tx.send(serde_json::to_string(&serde_json::json!({
-        "type": "robot_state",
+        "type": "state_change",
         "data": status,
     })).unwrap_or_default());
 
