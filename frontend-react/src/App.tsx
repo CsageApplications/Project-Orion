@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import HudRings from './components/HudRings'
 import StatusPanel from './components/StatusPanel'
@@ -23,6 +23,7 @@ function App() {
   const { listening, toggleListening } = useVoiceInput(handleTranscript)
   const setBackendOnline = useOrionStore((s) => s.setBackendOnline)
   const setRobotStatus = useOrionStore((s) => s.setRobotStatus)
+  const setTelemetry = useOrionStore((s) => s.setTelemetry)
   const pushLog = useOrionStore((s) => s.pushLog)
   const backendOnline = useOrionStore((s) => s.backendOnline)
   const wsRef = useRef<WebSocket | null>(null)
@@ -44,9 +45,14 @@ function App() {
 
       ws.onmessage = (e) => {
         try {
-          const data = JSON.parse(e.data)
-          if (data.state !== undefined) setRobotStatus(data)
-          else pushLog('INFO', e.data)
+          const msg = JSON.parse(e.data)
+          if (msg.type === 'robot_state' || msg.type === 'state_change') {
+            setRobotStatus(msg.data)
+          } else if (msg.type === 'telemetry') {
+            setTelemetry(msg.data.cpu_pct, msg.data.memory_pct, msg.data.battery_pct)
+          } else {
+            pushLog('INFO', e.data)
+          }
         } catch {
           pushLog('INFO', e.data)
         }

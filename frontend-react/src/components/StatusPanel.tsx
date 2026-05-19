@@ -61,9 +61,11 @@ function Row({
 export default function StatusPanel() {
   const backendOnline = useOrionStore((s) => s.backendOnline)
   const robot = useOrionStore((s) => s.robotStatus)
+  const cpuPct = useOrionStore((s) => s.cpuPct)
+  const memoryPct = useOrionStore((s) => s.memoryPct)
 
   const robotState = robot?.state?.toUpperCase() ?? 'STANDBY'
-  const battery = robot?.battery_level ?? null
+  const battery = robot?.battery_pct ?? null
 
   return (
     <div className="hud-panel h-full" style={{ padding: '14px 14px', display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -74,11 +76,11 @@ export default function StatusPanel() {
           <span style={{
             fontFamily:'var(--mono)', fontSize:'0.5rem', letterSpacing:'0.12em',
             padding: '2px 8px',
-            border: '1px solid rgba(0,212,255,0.2)',
+            border: `1px solid ${robotState === 'ERROR' ? 'rgba(239,68,68,0.4)' : robotState === 'ACTIVE' ? 'rgba(0,212,255,0.3)' : 'rgba(0,212,255,0.2)'}`,
             borderRadius: '2px',
-            background: 'rgba(0,212,255,0.06)',
-            color: 'var(--cyan)',
-          }}>NOMINAL</span>
+            background: robotState === 'ERROR' ? 'rgba(239,68,68,0.1)' : robotState === 'ACTIVE' ? 'rgba(0,212,255,0.1)' : 'rgba(0,212,255,0.06)',
+            color: robotState === 'ERROR' ? 'var(--red)' : 'var(--cyan)',
+          }}>{robotState === 'ERROR' ? 'FAULT' : robotState === 'ACTIVE' ? 'ACTIVE' : 'NOMINAL'}</span>
         </div>
       </div>
 
@@ -91,8 +93,12 @@ export default function StatusPanel() {
         <Row label="Battery" value={battery !== null ? String(battery) : '—'} unit="%"
           status={battery === null ? 'warn' : battery > 20 ? 'ok' : 'err'}
           showBar barValue={battery} />
-        <Row label="CPU" value="—" status="warn" showBar barValue={null} />
-        <Row label="Memory" value="—" status="warn" showBar barValue={null} />
+        <Row label="CPU" value={cpuPct !== null ? String(cpuPct) : '—'} unit="%"
+          status={cpuPct === null ? 'warn' : cpuPct > 80 ? 'err' : 'ok'}
+          showBar barValue={cpuPct} />
+        <Row label="Memory" value={memoryPct !== null ? String(memoryPct) : '—'} unit="%"
+          status={memoryPct === null ? 'warn' : memoryPct > 85 ? 'err' : 'ok'}
+          showBar barValue={memoryPct} />
         <Row label="LLM" value="READY" status="ok" />
         <Row label="Camera" value="NO FEED" status="warn" />
         <Row label="Audio" value="ACTIVE" status="ok" />
@@ -101,7 +107,7 @@ export default function StatusPanel() {
       {/* Footer */}
       <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(0,212,255,0.06)' }}>
         <span style={{ fontFamily:'var(--mono)', fontSize:'0.5rem', letterSpacing:'0.12em', color:'var(--text-dim)' }}>
-          SYS · ORION-01 · v0.1.0
+          SYS · ORION-01 · v0.2.0
         </span>
       </div>
     </div>
