@@ -4,6 +4,25 @@ A personal AI robot assistant for the home.
 
 Orion is a full-stack robotics platform that combines mechanical design, electronics, embedded firmware, AI inference, backend services, and a React command center into a single cohesive robot.
 
+> **v0.2.0** — Live telemetry, state machine, command/chat history, HUD state-driven color, EventLog filters
+
+---
+
+## Changelog
+
+### v0.2.0
+- **Backend**: Telemetry broadcast loop — battery drain simulation + live CPU/memory over WebSocket every 5s
+- **Backend**: Expanded state machine — `TASK_START`, `TASK_STOP`, `RESET`, `ERROR` commands with proper state transitions
+- **Backend**: In-memory command history (`GET /api/robot/commands`) and chat history (`GET /api/chat/history`)
+- **Frontend**: Fixed WebSocket message parsing — typed `telemetry` / `state_change` / `robot_state` handler
+- **Frontend**: StatusPanel — live CPU%, memory%, battery% from telemetry; dynamic NOMINAL/ACTIVE/FAULT badge
+- **Frontend**: HUD rings — state-driven accent color (ACTIVE=cyan, ERROR=red) via React context
+- **Frontend**: EventLog — level filter buttons (ALL/INFO/WARN/ERROR) + error/warn counters in footer
+- **Frontend**: ChatPanel — loads conversation history from backend on mount
+
+### v0.1.0
+- Initial full-stack scaffold: Rust/Axum backend, React/Vite frontend, ElevenLabs TTS/STT, Claude LLM, WebSocket
+
 ---
 
 ## Quickstart
