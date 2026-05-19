@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::sync::{broadcast, RwLock};
 use axum::{
     routing::{get, post},
@@ -88,9 +89,53 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/stt", post(api::stt))
         // WebSocket
         .route("/ws", get(ws::ws_handler))
-        .with_state(state)
+        .with_state(state.clone())
         .layer(cors)
         .layer(TraceLayer::new_for_http());
+
+    // ── Telemetry broadcast loop ─────────────────────────────────────
+    {
+        let telem = state;
+        tokio::spawn(async move {
+            let mut interval = tokio::time::interval(std::time::Duration::from_secs(5));
+            loop {
+                interval.tick().await;
+
+                // Drain battery by 1 pct per tick (min 0)
+                {
+                    let mut robot = telem.robot_state.write().await;
+                    if robot.battery_pct > 0 {
+                        robot.battery_pct -= 1;
+                    }
+                    robot.timestamp = chrono::Utc::now().to_rfc3339();
+                }
+
+                let robot = telem.robot_state.read().await.clone();
+
+                // Deterministic simulated cpu/memory based on unix seconds
+                let secs = SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_secs();
+                let cpu_pct = 20u8 + (secs % 40) as u8;
+                let memory_pct = 40u8 + (secs / 3 % 30) as u8;
+
+                let msg = serde_json::to_string(&serde_json::json!({
+                    "type": "telemetry",
+                    "data": {
+                        "battery_pct": robot.battery_pct,
+                        "state": robot.state,
+                        "cpu_pct": cpu_pct,
+                        "memory_pct": memory_pct,
+                        "timestamp": robot.timestamp,
+                    }
+                }))
+                .unwrap_or_default();
+
+                let _ = telem.ws_tx.send(msg);
+            }
+        });
+    }
 
     let addr = format!("{}:{}", config.host, config.port);
     tracing::info!("Listening on http://{addr}");
