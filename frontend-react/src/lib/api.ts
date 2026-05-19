@@ -34,3 +34,22 @@ export async function fetchRobotStatus() {
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
+
+export interface ChatHistoryItem {
+  id: string
+  role: string
+  message: string
+  timestamp: string
+}
+
+export async function fetchChatHistory(): Promise<ChatHistoryItem[]> {
+  const res = await fetch(`${BASE}/api/chat/history`)
+  if (!res.ok) return []
+  return res.json()
+}
+
+export async function fetchCommandHistory() {
+  const res = await fetch(`${BASE}/api/robot/commands`)
+  if (!res.ok) return []
+  return res.json()
+}

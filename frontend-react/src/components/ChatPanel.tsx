@@ -1,6 +1,6 @@
-import { useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import { useState, useRef, forwardRef, useImperativeHandle, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { chatWithOrion } from '../lib/api'
+import { chatWithOrion, fetchChatHistory } from '../lib/api'
 import { useOrionStore } from '../store'
 
 interface Message {
@@ -25,6 +25,21 @@ const ChatPanel = forwardRef<ChatPanelHandle, { onSpeak?: (text: string) => void
   const [input, setInput] = useState('')
   const [thinking, setThinking] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  // Load chat history from backend on mount
+  useEffect(() => {
+    fetchChatHistory().then((history) => {
+      if (history.length === 0) return
+      setMessages((_prev) => [
+        { id: msgId++, role: 'orion', text: 'ORION online. How can I assist?' },
+        ...history.map((h) => ({
+          id: msgId++,
+          role: h.role === 'user' ? 'user' as const : 'orion' as const,
+          text: h.message,
+        })),
+      ])
+    }).catch(() => {})
+  }, [])
 
   useImperativeHandle(ref, () => ({
     injectMessage: (text: string) => {
